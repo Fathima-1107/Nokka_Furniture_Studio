@@ -41,39 +41,7 @@ Once running, open:
 
 ---
 
-## 🛠️ Tech Stack & Key Features
-
-- **Frontend**: HTML5, Vanilla CSS Design System (`--ink`, `--paper`, `--brass`), Vanilla JS ES Modules.
-- **3D Engine**: Three.js (r128) procedural geometry for sofas, chairs, dining tables, beds, and lamps.
-- **QR Code Engine**: Zero-dependency `QRCodeGen` (`js/qr-code.js`) for dynamic SVG & Canvas rendering.
-- **PhonePe UPI Payment Scanner**:
-  - Bank Account: Indian Bank (`Indian Bank... - 9890`)
-  - UPI ID: `9538831664@axl` (with copy-to-clipboard, share, and image download)
-  - Animated pulsing laser scan line (`#25D366`)
-  - Simulated SMS OTP verification code (`4826`)
-- **Backend**: Node.js & Express.js REST API (`server.js`) on port `8080`.
-- **Database**: Dual-mode engine (`db.js`) supporting MongoDB (`mongodb://localhost:27017/nokka`) with automatic local file-based JSON fallback in `./data/db/`.
-- **Pre-Seeded Records**: Pre-loaded with 284+ relational orders, joined items, and warranties.
-
 ---
-
-## 👤 Sample Customer Search (for Dashboard testing)
-- **Email**: `varun.gowda@gmail.com`
-- **Phone**: `9538831664`
-- **Order ID**: `NOKKA-ORD-UPI-392701`
-
----
-
-## 👥 Customer Logins (all work)
-| Email | Password |
-|---|---|
-| rahul.sharma@yahoo.com | Rahul@2026 |
-| varun.gowda@gmail.com | password123 |
-| priyanka.sen@gmail.com | password123 |
-| amit.verma@hotmail.com | password123 |
-| sneha.patel@gmail.com | password123 |
-
-Anyone can also register on `login.html`. Emails are case-insensitive; passwords are hashed (scrypt).
 
 ### Login flow (all steps work)
 1. **Sign up** → logged in automatically and sent to the page you were trying to open.
@@ -88,10 +56,4 @@ Anyone can also register on `login.html`. Emails are case-insensitive; passwords
 Dashboard (sales, charts, top products, activity), Orders (search, filter, full order detail, status updates, invoice link), Users (search, block/unblock, reset password, delete), Products (add / edit / delete), Activity Log.
 Set a custom passcode with the `ADMIN_PASSCODE` environment variable.
 
-## 🔒 Admin Access Passcode
-- **Passcode**: `NOKKA-STUDIO-2026`
 
----
-
-## 📄 License & Credits
-Built by **Varun Gowda** for **NOKKA Bespoke Furniture Studio** (Gothenburg Joinery & Bengaluru Logistics).
