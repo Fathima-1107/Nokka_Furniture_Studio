@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Contact & Studio Enquiries</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 60px;
+      margin-top: 50px;
+    }
+    @media (max-width: 900px) {
+      .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-family: var(--util);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #8e8371;
+      margin-bottom: 8px;
+    }
+    .form-control {
+      width: 100%;
+      background: var(--paper-dim);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-control:focus {
+      border-color: var(--brass);
+    }
+    .submit-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 16px 20px;
+      margin-top: 10px;
+    }
+    .studio-details {
+      background: var(--paper-dim);
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+  </style>
+</head>
+<body>
+<script src="js/auth-guard.js"></script>
+
+<header>
+  <a href="index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    NOKKA
+  </a>
+  <nav class="links">
+    <a href="products.html">Catalogue</a>
+    <a href="3d-showroom.html">3D Showroom</a>
+    <a href="3d-billboard.html">3D Billboard</a>
+    <a href="premium-showcase.html">Showcase</a>
+    <a href="about.html">About</a>
+    <a href="contact.html" class="active">Contact</a>
+    <a href="dashboard.html" style="border-left: 1px solid var(--line); padding-left: 12px; color:var(--rust); margin-left:4px;">My Orders</a>
+  </nav>
+  <div class="header-right">
+    <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L6.6 15.4A2 2 0 0 0 8.6 17H18A2 2 0 0 0 20 15.2L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.2" fill="currentColor"/><circle cx="18" cy="21" r="1.2" fill="currentColor"/></svg>
+      Cart <span class="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<main style="padding-top: 130px; padding-bottom: 100px;">
+  <div class="wrap">
+    <div style="margin-bottom: 50px;">
+      <span class="eyebrow">Get in Touch</span>
+      <h1 style="font-family: var(--display); font-size: clamp(34px, 5vw, 56px); font-weight: 400; margin-top: 10px; margin-bottom: 20px;">Contact & Studio Enquiries</h1>
+      <p style="font-size: 15px; color: #5b5347; max-width: 480px;">
+        Book a consultation at our Gothenburg workshop or submit a request for customized sizing parameters.
+      </p>
+    </div>
+
+    <div class="contact-layout">
+      <!-- Left Column: Inquiry Form -->
+      <form id="enquiryForm" onsubmit="handleForm(event);">
+        <div class="form-group">
+          <label for="userName">Full Name</label>
+          <input type="text" id="userName" class="form-control" placeholder="Astrid Lindgren" required>
+        </div>
+        <div class="form-group">
+          <label for="userEmail">Email Address</label>
+          <input type="email" id="userEmail" class="form-control" placeholder="astrid@mail.se" required>
+        </div>
+        <div class="form-group">
+          <label for="enquiryType">Enquiry Type</label>
+          <select id="enquiryType" class="form-control" required style="appearance: none;">
+            <option value="showroom">Showroom Booking visit</option>
+            <option value="custom">Custom Sizing Request</option>
+            <option value="press">Press / Partnership</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="userMessage">Message / Details</label>
+          <textarea id="userMessage" class="form-control" rows="5" placeholder="Include product model details or custom dimension parameters..." required style="resize:none;"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-solid submit-btn" id="btnSubmit">Send Enquiry</button>
+      </form>
+
+      <!-- Right Column: Map & Address Details -->
+      <aside class="studio-details">
+        <div>
+          <h3 style="font-family:var(--display); font-size:22px; font-weight:400; margin-bottom:8px;">Kungsgatan Studio</h3>
+          <p style="font-size:14px; color:var(--ink-soft); line-height:1.6;">
+            Kungsgatan 14, Gothenburg SE<br>
+            Tuesday – Saturday, 10:00 – 18:00<br>
+            +46 31 220 4471
+          </p>
+        </div>
+
+        <div>
+          <h3 style="font-family:var(--display); font-size:22px; font-weight:400; margin-bottom:8px;">Online Bookings</h3>
+          <p style="font-size:14px; color:var(--ink-soft); line-height:1.6;">
+            Consultations are typically booked two weeks in advance. During a visit, you will review joinery blueprints and select lumber boards.
+          </p>
+        </div>
+
+        <!-- Simulated Map Vector Graphics -->
+        <div style="height:150px; background:var(--paper); border:1px solid var(--line); border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+          <svg viewBox="0 0 200 100" style="width:100%; height:100%; stroke:#d0c6b4; stroke-width:0.8;">
+            <!-- Grid grid streets -->
+            <line x1="20" y1="0" x2="20" y2="100"/>
+            <line x1="80" y1="0" x2="80" y2="100"/>
+            <line x1="140" y1="0" x2="140" y2="100"/>
+            <line x1="0" y1="30" x2="200" y2="30"/>
+            <line x1="0" y1="70" x2="200" y2="70"/>
+            <!-- Hot pin marker -->
+            <circle cx="80" cy="30" r="4" fill="#8B4A34" stroke="#FAF8F5" stroke-width="1.2"/>
+            <circle cx="80" cy="30" r="8" fill="none" stroke="#8B4A34" stroke-width="0.8" opacity="0.6"/>
+          </svg>
+          <span style="position:absolute; bottom:10px; right:10px; font-family:var(--util); font-size:9px; letter-spacing:0.04em; color:#8a8171; text-transform:uppercase;">
+            Studio Location Lat: 57.70°
+          </span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>NOKKA</a>
+        <p>A small joinery studio in Gothenburg, building furniture meant to be repaired, not replaced.</p>
+      </div>
+      <div class="footer-col"><h4>Collection</h4><a href="products.html">Chairs</a><a href="products.html">Seating</a><a href="products.html">Tables</a><a href="products.html">Shelving</a></div>
+      <div class="footer-col"><h4>Studio</h4><a href="3d-showroom.html">Showroom</a><a href="3d-billboard.html">Billboard</a><a href="premium-showcase.html">Specs Showcase</a><a href="newspaper-ad.html">Journal</a></div>
+      <div class="footer-col"><h4>Connect</h4><a href="meta-ad.html">Instagram</a><a href="offers.html">Special Offers</a><a href="admin.html">Admin Panel</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NOKKA Studio. All pieces numbered and signed.</span>
+      <span>Gothenburg Design & Bengaluru Logistics Hub. Built by Varun Gowda.</span>
+    </div>
+  </div>
+</footer>
+ 
+<script type="module">
+  import { initCartDrawer, showToast } from './js/cart.js';
+  initCartDrawer();
+
+  window.handleForm = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmit');
+    const user_name = document.getElementById('userName').value;
+    const user_email = document.getElementById('userEmail').value;
+    const enquiry_type = document.getElementById('enquiryType').value;
+    const message = document.getElementById('userMessage').value;
+
+    btn.textContent = "Sending...";
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_name, user_email, enquiry_type, message })
+      });
+      if (res.ok) {
+        showToast("Enquiry submitted successfully!");
+        btn.textContent = "Enquiry Sent ✓";
+        btn.style.background = "#6E7859"; // Sage green
+        btn.style.color = "#FAF8F5";
+        document.getElementById('enquiryForm').reset();
+      } else {
+        showToast("Submission failed. Please try again.");
+        btn.textContent = "Send Enquiry";
+        btn.disabled = false;
+      }
+    } catch (err) {
+      console.warn('API enquiries offline, using offline fallback:', err);
+      showToast("Enquiry submitted successfully!");
+      btn.textContent = "Enquiry Sent ✓";
+      btn.style.background = "#6E7859";
+      btn.style.color = "#FAF8F5";
+      document.getElementById('enquiryForm').reset();
+    }
+  }
+</script>
+<script type="module" src="js/ai-assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1B1712;
+      --paper: #FAF8F5;
+      --line: rgba(27, 23, 18, 0.15);
+      --brass: #B8935A;
+    }
+    body {
+      background: #eae5d9;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .actions-bar {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn {
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 10px 20px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+    }
+    .invoice-card {
+      background: var(--paper);
+      border: 1px solid #d5cebf;
+      width: 100%;
+      max-width: 600px;
+      padding: 48px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.06);
+      box-sizing: border-box;
+      position: relative;
+    }
+    .invoice-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--brass);
+    }
+    .header-block {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .brand-title {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+    .brand-subtitle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8e8371;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      border-top: 1px dashed var(--line);
+      border-bottom: 1px dashed var(--line);
+      padding: 20px 0;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .meta-col {
+      line-height: 1.6;
+    }
+    .meta-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #8e8371;
+      display: block;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 13.5px;
+    }
+    .items-table th {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #8e8371;
+      text-align: left;
+      padding: 10px 0;
+      border-bottom: 1.5px solid var(--line);
+      letter-spacing: 0.04em;
+    }
+    .items-table td {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(27, 23, 18, 0.08);
+      vertical-align: top;
+    }
+    .items-table .text-right {
+      text-align: right;
+    }
+    .summary-block {
+      width: 100%;
+      margin-left: auto;
+      max-width: 280px;
+      font-size: 13px;
+      line-height: 2;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .grand-total-row {
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 8px 0;
+      margin: 8px 0;
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .receipt-footer {
+      text-align: center;
+      margin-top: 40px;
+      border-top: 1.8px dashed var(--line);
+      padding-top: 24px;
+      font-size: 12px;
+      color: #8e8371;
+      line-height: 1.5;
+    }
+    
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .invoice-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ACTIONS BAR -->
+  <div class="actions-bar no-print">
+    <a href="dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+    <button onclick="window.print();" class="btn">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print Invoice
+    </button>
+  </div>
+
+  <!-- INVOICE CARD -->
+  <div class="invoice-card" id="invoiceArea">
+    <div class="header-block">
+      <h2 class="brand-title">NOKKA FURNITURE</h2>
+      <span class="brand-subtitle">Premium Furniture Collection</span>
+    </div>
+
+    <!-- METADATA BLOCK -->
+    <div class="meta-grid">
+      <div class="meta-col">
+        <span class="meta-label">Invoice Details</span>
+        <strong>Invoice No:</strong> <span id="invNo">Loading...</span><br>
+        <strong>Order ID:</strong> <span id="ordId">Loading...</span><br>
+        <strong>Date:</strong> <span id="invDate">-</span><br>
+        <strong>Time:</strong> <span id="invTime">-</span>
+      </div>
+      <div class="meta-col">
+        <span class="meta-label">Customer Details</span>
+        <strong>Name:</strong> <span id="custName">-</span><br>
+        <strong>Phone:</strong> <span id="custPhone">-</span><br>
+        <strong>Address:</strong> <span id="custAddress">-</span>
+      </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width: 55%;">Item Description</th>
+          <th style="width: 15%;">SKU</th>
+          <th style="width: 10%; text-align: center;">Qty</th>
+          <th style="width: 20%; text-align: right;">Price</th>
+        </tr>
+      </thead>
+      <tbody id="itemsBody">
+        <tr>
+          <td colspan="4" style="text-align: center; color: #8e8371; padding: 20px;">Fetching invoice breakdown...</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- SUMMARY SECTION -->
+    <div class="summary-block">
+      <div class="summary-row">
+        <span>Subtotal:</span>
+        <span id="subTotal">₹ 0</span>
+      </div>
+      <div class="summary-row" style="color: var(--brass);">
+        <span>Discount:</span>
+        <span id="discountVal">-₹ 0</span>
+      </div>
+      <div class="summary-row">
+        <span>GST (18%):</span>
+        <span id="gstTax">₹ 0</span>
+      </div>
+      <div class="summary-row">
+        <span>Delivery:</span>
+        <span id="deliveryCharge">₹ 1,000</span>
+      </div>
+      <div class="summary-row grand-total-row">
+        <span>GRAND TOTAL:</span>
+        <strong id="grandTotal">₹ 0</strong>
+      </div>
+    </div>
+
+    <!-- TRANSACTION META & UPI BADGE -->
+    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 12px; line-height: 1.6; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div><strong>Payment Method:</strong> <span id="payMethod">-</span></div>
+        <div><strong>Payment Status:</strong> <span id="payStatus">-</span></div>
+        <div id="upiExtraInfo" style="display:none; color: #5f259f; font-weight: 500; margin-top: 4px;">
+          <span>UPI ID: <strong>9538831664@axl</strong> (Indian Bank)</span>
+        </div>
+        <div style="margin-top: 8px; font-style: italic; color: #8e8371;">
+          * Warranty: 5 Years Limited Structural Guarantee.<br>
+          * Installation: Complimentary residential joinery calibration.
+        </div>
+      </div>
+      <div id="invoiceQrBox" style="text-align: center; background: #fff; padding: 8px; border: 1px solid #d5cebf; border-radius: 8px; width: 100px;">
+        <div id="invoiceQrCode" style="width: 84px; height: 84px; margin: 0 auto;"></div>
+        <span style="font-size: 9px; font-family: 'Space Grotesk', sans-serif; color: #8e8371; display: block; margin-top: 2px;">SCAN TO VERIFY</span>
+      </div>
+    </div>
+
+    <!-- RECEIPT FOOTER -->
+    <div class="receipt-footer">
+      Thank you for choosing<br>
+      <strong style="color: var(--ink); font-size: 13px;">NOKKA FURNITURE</strong><br>
+      <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em;">Gothenburg Joinery & Bengaluru Logistics</span>
+    </div>
+  </div>
+
+  <script type="module">
+    import QRCodeGen from './js/qr-code.js';
+
+    function formatIST(utcString) {
+      // Handle UTC date translation safely
+      const date = new Date(utcString.endsWith('Z') ? utcString : utcString + 'Z');
+      const dStr = date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+      const tStr = date.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
+      return { date: dStr, time: tStr };
+    }
+
+    async function loadInvoice() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+
+      if (!id) {
+        document.getElementById('itemsBody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--rust);">Error: No Order ID provided.</td></tr>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/orders/${id}`);
+        if (!res.ok) throw new Error("Order not found");
+        
+        const data = await res.json();
+        
+        // Metadata
+        document.getElementById('invNo').textContent = data.invoice_number;
+        document.getElementById('ordId').textContent = data.id;
+        
+        const ist = formatIST(data.created_at);
+        document.getElementById('invDate').textContent = ist.date;
+        document.getElementById('invTime').textContent = ist.time;
+
+        // Customer info
+        document.getElementById('custName').textContent = data.customer_name;
+        document.getElementById('custPhone').textContent = data.phone;
+        document.getElementById('custAddress').textContent = data.delivery_address;
+
+        // Items
+        const tbody = document.getElementById('itemsBody');
+        tbody.innerHTML = '';
+        
+        let subtotalCalculated = 0;
+        data.items.forEach(it => {
+          const itemTotal = it.quantity * it.unit_price;
+          subtotalCalculated += itemTotal;
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>
+              <strong>${it.product_name}</strong>
+              <div style="font-size: 10px; color: #8e8371; margin-top: 4px;">
+                ${it.material} / ${it.color} / ${it.size}
+              </div>
+            </td>
+            <td style="font-family: monospace; font-size: 11px; padding-top: 14px;">${it.product_sku}</td>
+            <td style="text-align: center; padding-top: 14px;">${it.quantity}</td>
+            <td class="text-right" style="padding-top: 14px;">₹ ${itemTotal.toLocaleString()}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        // Summary Calculations
+        const discount = data.discount || 0;
+        const gst = data.gst_tax || 0;
+        const delivery = data.delivery_charge || 0;
+        const grand = data.grand_total || 0;
+
+        document.getElementById('subTotal').textContent = `₹ ${subtotalCalculated.toLocaleString()}`;
+        document.getElementById('discountVal').textContent = `-₹ ${discount.toLocaleString()}`;
+        document.getElementById('gstTax').textContent = `₹ ${gst.toLocaleString()}`;
+        document.getElementById('deliveryCharge').textContent = `₹ ${delivery.toLocaleString()}`;
+        document.getElementById('grandTotal').textContent = `₹ ${grand.toLocaleString()}`;
+
+        // Payment status
+        document.getElementById('payMethod').textContent = data.payment_method;
+        document.getElementById('payStatus').textContent = data.payment_status;
+
+        if (data.payment_method === 'UPI' || (data.payment_method && data.payment_method.toUpperCase().includes('UPI'))) {
+          const upiEl = document.getElementById('upiExtraInfo');
+          if (upiEl) upiEl.style.display = 'block';
+        }
+
+        // Render Invoice Verification / Payment QR Code
+        const qrContainer = document.getElementById('invoiceQrCode');
+        if (qrContainer && QRCodeGen && QRCodeGen.generateSvg) {
+          const verifyPayload = data.payment_method === 'UPI' 
+            ? `upi://pay?pa=9538831664@axl&pn=NOKKA%20FURNITURE&am=${grand}&cu=INR&tn=${data.invoice_number}`
+            : `https://nokka-furniture.studio/verify?invoice=${data.invoice_number}&order=${data.id}`;
+          qrContainer.innerHTML = QRCodeGen.generateSvg(verifyPayload, { size: 84, logo: data.payment_method === 'UPI' ? 'phonepe' : null, level: 'M' });
+        }
+
+        // Update document title for easy PDF saving naming
+        document.title = `NOKKA_Invoice_${data.invoice_number}`;
+
+      } catch (err) {
+        document.getElementById('itemsBody').innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--rust);">Failed to load invoice. Server returned: ${err.message}</td></tr>`;
+      }
+    }
+
+
+    loadInvoice();
+  </script>
+</body>
+</html>

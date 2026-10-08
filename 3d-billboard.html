@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — 3D Anamorphic Billboard Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/billboard.css">
+</head>
+<body class="billboard-page">
+<script src="js/auth-guard.js"></script>
+
+<header style="mix-blend-mode: normal; background: rgba(17, 16, 14, 0.95); border-bottom: 1px solid rgba(242, 238, 228, 0.08);">
+  <a href="index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    NOKKA
+  </a>
+  <nav class="links">
+    <a href="products.html">Catalogue</a>
+    <a href="3d-showroom.html">3D Showroom</a>
+    <a href="3d-billboard.html" class="active">3D Billboard</a>
+    <a href="premium-showcase.html">Showcase</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="dashboard.html" style="border-left: 1px solid var(--line); padding-left: 12px; color:var(--rust); margin-left:4px;">My Orders</a>
+  </nav>
+  <div class="header-right">
+    <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L6.6 15.4A2 2 0 0 0 8.6 17H18A2 2 0 0 0 20 15.2L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.2" fill="currentColor"/><circle cx="18" cy="21" r="1.2" fill="currentColor"/></svg>
+      Cart <span class="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top: 20px;">
+  <div class="billboard-intro">
+    <span class="eyebrow">Interactive 3D Illusion Simulator</span>
+    <h1>Anamorphic Billboard</h1>
+    <p>
+      Simulating a 3D street LED billboard. Adjust sliders or tilt the screen angle to see the perspective depth illusion in action.
+    </p>
+  </div>
+
+  <div class="city-stage">
+    <div class="billboard-chassis" id="chassis">
+      <div class="screen-hud">
+        Display: <strong id="hudName">Kessel Lounge Chair</strong><br>
+        Frequency: <strong>120 Hz</strong><br>
+        Illusion Mode: <strong style="color:var(--rust);">Active (Anamorphic)</strong>
+      </div>
+
+      <button class="explode-trigger-btn" id="btnExplode">Explode Assembly</button>
+      <canvas id="billboardCanvas" style="width: 100%; height:100%; border-radius: 6px;"></canvas>
+    </div>
+
+    <div class="street-scene">
+      <div class="street-info">
+        <h4>Kungsgatan Corner Simulator</h4>
+        <p>Gothenburg SE — Simulated View Angle</p>
+        <p style="font-size: 10px; opacity:0.6; margin-top:4px; font-family:var(--util); text-transform:uppercase; letter-spacing:0.04em;">Logistics Core built by Varun Gowda</p>
+      </div>
+
+      <div class="billboard-controls">
+        <div class="control-slider-group">
+          <label for="chassisTilt">Screen Tilt</label>
+          <input type="range" id="chassisTilt" min="-25" max="25" value="0">
+        </div>
+        <div class="control-slider-group">
+          <label for="explodeSlider">Explode Parts</label>
+          <input type="range" id="explodeSlider" min="0" max="100" value="0">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 50px;">
+    <h3 class="bb-track-title">Select Active Queue Piece</h3>
+    <div class="bb-selector-rail" id="selectorRail"></div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module">
+  import { PRODUCTS, makeMaterials, BUILDERS, initProducts } from './js/products.js';
+  import { ThreeViewer } from './js/three-helper.js';
+  import { initCartDrawer } from './js/cart.js';
+
+  initCartDrawer();
+
+  let activeIndex = 0;
+  let explodeVal = 0.0;
+  let isExploded = false;
+
+  const canvas = document.getElementById('billboardCanvas');
+  const viewer = new ThreeViewer(canvas, {
+    fov: 28,
+    camZ: 8.5,
+    camY: 1.8,
+    autoRotate: true,
+    initRotY: 0.5,
+    initRotX: 0.08
+  });
+
+  const streetLight = new THREE.DirectionalLight(0xffddaa, 1.8);
+  streetLight.position.set(0, -6, 2);
+  viewer.scene.add(streetLight);
+
+  function setBillboardModel(idx) {
+    activeIndex = idx;
+    const p = PRODUCTS[idx];
+    
+    const mats = makeMaterials(THREE, { wood: 'walnut', fabric: 'cream' });
+    const model = BUILDERS[p.builder](THREE, mats, p.id);
+    
+    model.scale.setScalar(1.25);
+    model.position.z = 0.4;
+    model.position.y = -0.4;
+    
+    viewer.setModel(model);
+
+    document.getElementById('hudName').textContent = p.name;
+    document.querySelectorAll('.bb-selector-card').forEach((c, i) => {
+      c.classList.toggle('active', i === idx);
+    });
+
+    document.getElementById('explodeSlider').value = 0;
+    viewer.setExplode(0.0);
+    isExploded = false;
+    document.getElementById('btnExplode').classList.remove('active');
+    document.getElementById('btnExplode').textContent = 'Explode Assembly';
+  }
+
+  async function initBillboard() {
+    await initProducts();
+
+    const rail = document.getElementById('selectorRail');
+    PRODUCTS.forEach((p, i) => {
+      const card = document.createElement('button');
+      card.className = `bb-selector-card ${i === 0 ? 'active' : ''}`;
+      card.innerHTML = `
+        <span class="name">${p.name}</span>
+        <span class="price">₹ ${p.price.toLocaleString()}</span>
+      `;
+      card.addEventListener('click', () => {
+        setBillboardModel(i);
+      });
+      rail.appendChild(card);
+    });
+
+    setBillboardModel(0);
+  }
+
+  initBillboard();
+
+  const chassis = document.getElementById('chassis');
+  const tiltInput = document.getElementById('chassisTilt');
+  
+  tiltInput.addEventListener('input', () => {
+    const val = tiltInput.value;
+    chassis.style.transform = `perspective(1000px) rotateY(${val}deg) rotateX(${Math.abs(val)*0.1}deg)`;
+  });
+
+  const explodeSlider = document.getElementById('explodeSlider');
+  explodeSlider.addEventListener('input', () => {
+    const factor = explodeSlider.value / 100;
+    viewer.setExplode(factor);
+    isExploded = factor > 0.3;
+    document.getElementById('btnExplode').classList.toggle('active', isExploded);
+    document.getElementById('btnExplode').textContent = isExploded ? 'Reassemble Piece' : 'Explode Assembly';
+  });
+
+  const btnExplode = document.getElementById('btnExplode');
+  btnExplode.addEventListener('click', () => {
+    isExploded = !isExploded;
+    btnExplode.classList.toggle('active', isExploded);
+    
+    const targetVal = isExploded ? 1.0 : 0.0;
+    explodeSlider.value = isExploded ? 100 : 0;
+    viewer.setExplode(targetVal);
+    btnExplode.textContent = isExploded ? 'Reassemble Piece' : 'Explode Assembly';
+  });
+
+  const stage = document.querySelector('.city-stage');
+  stage.addEventListener('mousemove', e => {
+    const r = stage.getBoundingClientRect();
+    const xRatio = (e.clientX - r.left) / r.width - 0.5;
+    const yRatio = (e.clientY - r.top) / r.height - 0.5;
+
+    viewer.targetRotY = 0.5 + xRatio * 0.4;
+    viewer.targetRotX = yRatio * 0.25;
+  });
+</script>
+<script type="module" src="js/ai-assistant.js"></script>
+</body>
+</html>

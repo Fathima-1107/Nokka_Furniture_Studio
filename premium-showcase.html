@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Premium Cinematic Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/showcase.css">
+</head>
+<body class="showcase-page">
+<script src="js/auth-guard.js"></script>
+
+  <a href="index.html" class="showcase-close" aria-label="Exit Showcase">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+
+  <header class="showcase-header">
+    <span class="eyebrow" style="color: var(--brass);">Cinematic Inspection</span>
+    <h1 id="showcaseName">Kessel Lounge Chair</h1>
+    <p id="showcaseDesc">American black walnut, oil-finished, deepens with age. Inspect construction details using the panels on the right.</p>
+  </header>
+
+  <div class="canvas-container">
+    <canvas id="showcaseCanvas" style="width:100%; height:100%;"></canvas>
+  </div>
+
+  <div class="audio-controller">
+    <button class="audio-btn" id="audioToggle" aria-label="Play/Pause Audio">
+      <svg id="svgMuted" viewBox="0 0 24 24" fill="none" style="display: block;"><path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" stroke-width="1.8"/><path d="M23 9L17 15M17 9L23 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg id="svgPlaying" viewBox="0 0 24 24" fill="none" style="display: none;"><path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" stroke-width="1.8"/><path d="M15.54 8.46A5 5 0 0 1 15.54 15.54M19.07 4.93A10 10 0 0 1 19.07 19.07" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <span class="audio-label" id="audioLabel">Ambient: Mute</span>
+  </div>
+
+  <div class="model-slider-nav" id="modelNav"></div>
+
+  <aside class="focus-menu">
+    <div class="focus-card active" data-focus="full">
+      <span class="num">Focus 01</span>
+      <h3 class="title">Silhouette & Form</h3>
+      <div class="desc">A low, wide Scandinavian profile engineered for reading comfort. The angles of the armrests and back rest are balance-matched.</div>
+    </div>
+    
+    <div class="focus-card" data-focus="joint">
+      <span class="num">Focus 02</span>
+      <h3 class="title">Mortise & Tenon</h3>
+      <div class="desc">Solid joinery with wedged timber pins. There are no screws or metal fasteners in the visible wooden frame.</div>
+    </div>
+    
+    <div class="focus-card" data-focus="fabric">
+      <span class="num">Focus 03</span>
+      <h3 class="title">Swedish Bouclé</h3>
+      <div class="desc">Loops of raw wool and natural flax fibers woven near Gothenburg. Soft to the touch, built to wear beautifully without sagging.</div>
+    </div>
+    
+    <div class="focus-card" data-focus="finish">
+      <span class="num">Focus 04</span>
+      <h3 class="title">Linseed Oil finish</h3>
+      <div class="desc">Linseed oil and organic beeswax compound. It wears the way skin tans, not the way paint chips. Hand-rubbed in three coats.</div>
+    </div>
+    
+    <div class="focus-card" data-focus="plaque">
+      <span class="num">Focus 05</span>
+      <h3 class="title">Bespoke Plaque</h3>
+      <div class="desc">Each piece features a hidden brass plaque carrying the craftsman's signature and the year of creation. Officially authenticated.</div>
+    </div>
+  </aside>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script type="module">
+    import { PRODUCTS, makeMaterials, BUILDERS } from './js/products.js';
+    import { ThreeViewer } from './js/three-helper.js';
+    import { initCartDrawer } from './js/cart.js';
+
+    initCartDrawer();
+
+    let activeIdx = 0;
+
+    const canvas = document.getElementById('showcaseCanvas');
+    const viewer = new ThreeViewer(canvas, {
+      fov: 28,
+      camZ: 8.0,
+      camY: 1.2,
+      autoRotate: true,
+      autoRotateSpeed: 0.001,
+      allowZoom: true
+    });
+
+    viewer.scene.background = new THREE.Color(0x0a0908);
+    viewer.scene.traverse(node => {
+      if (node.isAmbientLight) node.intensity = 0.65;
+      if (node.isDirectionalLight) node.intensity = 1.6;
+    });
+
+    const backCandle = new THREE.PointLight(0xffaa66, 2.5, 12);
+    backCandle.position.set(-2, 0.4, -2.5);
+    viewer.scene.add(backCandle);
+
+    function loadShowcaseModel(idx) {
+      activeIdx = idx;
+      const p = PRODUCTS[idx];
+
+      const mats = makeMaterials(THREE, { wood: 'walnut', fabric: 'cream' });
+      const model = BUILDERS[p.builder](THREE, mats, p.id);
+      
+      viewer.setModel(model);
+
+      document.getElementById('showcaseName').textContent = p.name;
+      document.getElementById('showcaseDesc').textContent = p.desc;
+      
+      document.querySelectorAll('.model-slider-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+
+      viewer.resetCamera();
+      document.querySelectorAll('.focus-card').forEach((c, i) => {
+        c.classList.toggle('active', i === 0);
+      });
+    }
+
+    async function startShowcase() {
+      await initProducts();
+
+      const nav = document.getElementById('modelNav');
+      PRODUCTS.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = `model-slider-btn ${i === 0 ? 'active' : ''}`;
+        btn.textContent = p.name.split(' ')[0];
+        btn.addEventListener('click', () => {
+          loadShowcaseModel(i);
+        });
+        nav.appendChild(btn);
+      });
+
+      loadShowcaseModel(0);
+    }
+
+    startShowcase();
+
+    const focusConfigs = {
+      full: {
+        camPos: new THREE.Vector3(0, 1.2, 8.0),
+        lookAt: new THREE.Vector3(0, 0, 0)
+      },
+      joint: {
+        camPos: new THREE.Vector3(1.1, -0.6, -1.0),
+        lookAt: new THREE.Vector3(0.9, -0.85, -0.8)
+      },
+      fabric: {
+        camPos: new THREE.Vector3(-0.4, 0.6, 1.4),
+        lookAt: new THREE.Vector3(0, 0.12, 0.2)
+      },
+      finish: {
+        camPos: new THREE.Vector3(1.4, 0.9, 0.5),
+        lookAt: new THREE.Vector3(1.1, 0.5, 0.1)
+      },
+      plaque: {
+        camPos: new THREE.Vector3(0.0, -1.0, 0.5),
+        lookAt: new THREE.Vector3(0.0, -0.5, 0.0)
+      }
+    };
+
+    document.querySelectorAll('.focus-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.focus-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        const focusId = card.dataset.focus;
+        const config = focusConfigs[focusId];
+        if (config) {
+          viewer.autoRotate = (focusId === 'full');
+          viewer.flyTo(config.camPos, config.lookAt);
+        }
+      });
+    });
+
+    // Web Audio Synthesizer logic
+    let audioCtx = null;
+    let synthPlaying = false;
+    let synthInterval = null;
+    let oscillators = [];
+    let filter = null;
+    let delayNode = null;
+
+    const CHORDS = [
+      [130.81, 164.81, 196.00, 246.94, 293.66],
+      [110.00, 130.81, 164.81, 196.00, 220.00],
+      [87.31, 130.81, 174.61, 220.00, 261.63],
+      [98.00, 146.83, 196.00, 220.00, 293.66]
+    ];
+    let currentChordIdx = 0;
+
+    function initSynth() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContextClass();
+
+      filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450, audioCtx.currentTime);
+      filter.Q.value = 1.5;
+
+      delayNode = audioCtx.createDelay(1.0);
+      delayNode.delayTime.value = 0.55;
+      const feedback = audioCtx.createGain();
+      feedback.gain.value = 0.45;
+      
+      delayNode.connect(feedback);
+      feedback.connect(delayNode);
+
+      filter.connect(audioCtx.destination);
+      filter.connect(delayNode);
+      delayNode.connect(audioCtx.destination);
+
+      sweepFilter();
+    }
+
+    function sweepFilter() {
+      if (!audioCtx || !synthPlaying) return;
+      const t = audioCtx.currentTime;
+      filter.frequency.linearRampToValueAtTime(320, t + 6);
+      filter.frequency.linearRampToValueAtTime(700, t + 12);
+      setTimeout(sweepFilter, 12000);
+    }
+
+    function playChord() {
+      if (!audioCtx || !synthPlaying) return;
+
+      const chord = CHORDS[currentChordIdx];
+      const now = audioCtx.currentTime;
+      
+      oscillators.forEach(osc => {
+        try { osc.stop(now); } catch(e){}
+      });
+      oscillators = [];
+
+      const chordVolume = audioCtx.createGain();
+      chordVolume.gain.setValueAtTime(0.001, now);
+      chordVolume.gain.linearRampToValueAtTime(0.08, now + 2.5);
+      chordVolume.gain.linearRampToValueAtTime(0.001, now + 7.5);
+      chordVolume.connect(filter);
+
+      chord.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        osc.type = idx === 0 ? 'sine' : 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.detune.setValueAtTime((Math.random() - 0.5) * 8, now);
+        osc.connect(chordVolume);
+        osc.start(now);
+        oscillators.push(osc);
+      });
+
+      currentChordIdx = (currentChordIdx + 1) % CHORDS.length;
+    }
+
+    function toggleSynth() {
+      if (!synthPlaying) {
+        if (!audioCtx) initSynth();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        synthPlaying = true;
+        document.getElementById('svgMuted').style.display = 'none';
+        document.getElementById('svgPlaying').style.display = 'block';
+        document.getElementById('audioLabel').textContent = 'Ambient: Playing';
+
+        playChord();
+        synthInterval = setInterval(playChord, 7800);
+      } else {
+        synthPlaying = false;
+        clearInterval(synthInterval);
+        document.getElementById('svgMuted').style.display = 'block';
+        document.getElementById('svgPlaying').style.display = 'none';
+        document.getElementById('audioLabel').textContent = 'Ambient: Mute';
+
+        oscillators.forEach(osc => {
+          try { osc.stop(); } catch(e){}
+        });
+        oscillators = [];
+      }
+    }
+
+    document.getElementById('audioToggle').addEventListener('click', toggleSynth);
+  </script>
+</body>
+</html>

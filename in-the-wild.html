@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Nokka — In the Wild</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap');
+
+  :root{
+    --ink:#0b0a08;
+    --panel:#141210;
+    --cream:#efe7d8;
+    --gold:#c99a52;
+    --walnut:#5b3a24;
+    --line:rgba(239,231,216,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:'Inter', sans-serif;
+    padding:5vw 6vw;
+  }
+  
+  /* Adding back navigation for consistency */
+  .back-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 40px;
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .back-nav:hover {
+    color: var(--gold);
+  }
+
+  .kicker{
+    font-size:13px;
+    letter-spacing:0.04em;
+    color:var(--gold);
+    margin-bottom:14px;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:clamp(30px, 4vw, 46px);
+    line-height:1.15;
+    max-width:14ch;
+    margin-bottom:16px;
+  }
+  h2 em{ font-style:italic; font-weight:400; }
+  .intro{
+    max-width:52ch;
+    color:rgba(239,231,216,0.65);
+    font-size:15.5px;
+    line-height:1.6;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto auto;
+    gap:14px;
+    margin-top:48px;
+  }
+  .card{
+    position:relative;
+    border-radius:2px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    min-height:220px;
+  }
+  .card.hero{ grid-row: span 2; min-height:520px; }
+  .card.tall{ min-height:250px; }
+
+  /* stand-in photography: layered warm-light gradients + a grain overlay */
+  .scene{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(120% 90% at 20% 10%, rgba(255,214,150,0.22), transparent 55%),
+      linear-gradient(160deg, #2a1d13 0%, #1a130c 45%, #0f0b07 100%);
+  }
+  .scene::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+  .scene .silhouette{
+    position:absolute;
+    opacity:0.5;
+    filter:drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+  }
+  .card.hero .silhouette{ width:46%; bottom:6%; right:10%; }
+  .card:nth-child(2) .silhouette{ width:40%; bottom:8%; right:12%; }
+  .card:nth-child(3) .silhouette{ width:38%; bottom:6%; left:10%; }
+
+  .caption{
+    position:absolute;
+    left:20px; bottom:18px;
+    right:20px;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:12px;
+  }
+  .caption .place{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:17px;
+    color:var(--cream);
+  }
+  .caption .piece{
+    font-size:11.5px;
+    color:rgba(239,231,216,0.55);
+    text-align:right;
+  }
+
+  .quote{
+    grid-column:2; 
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:26px 24px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:220px;
+  }
+  .quote p{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:19px;
+    line-height:1.5;
+    color:var(--cream);
+    margin-bottom:14px;
+  }
+  .quote .who{
+    font-size:12.5px;
+    color:var(--gold);
+    letter-spacing:0.03em;
+  }
+
+  .footer-row{
+    margin-top:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px solid var(--line);
+    padding-top:18px;
+  }
+  .footer-row .stat{
+    font-size:13px;
+    color:rgba(239,231,216,0.55);
+  }
+  .footer-row .stat b{
+    color:var(--cream);
+    font-weight:500;
+  }
+  .footer-row a{
+    color:var(--gold);
+    text-decoration:none;
+    font-size:13.5px;
+    border-bottom:1px solid rgba(201,154,82,0.4);
+    padding-bottom:2px;
+  }
+
+  @media (max-width:720px){
+    .grid{ grid-template-columns:1fr; }
+    .card.hero{ grid-row:auto; min-height:340px; }
+    .quote{ grid-column:1; }
+  }
+
+  /* --- process strip --- */
+  .section{ margin-top:88px; }
+  .section .kicker{ margin-bottom:14px; }
+  h3{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:clamp(24px, 3vw, 34px);
+    max-width:16ch;
+    margin-bottom:36px;
+  }
+  .process{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .step{
+    background:var(--ink);
+    padding:26px 22px 30px;
+    position:relative;
+  }
+  .step .mark{
+    width:34px; height:34px;
+    border-radius:50%;
+    border:1px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    color:var(--gold);
+    font-size:14px;
+    margin-bottom:22px;
+  }
+  .step h4{
+    font-size:15px;
+    font-weight:500;
+    margin-bottom:8px;
+  }
+  .step p{
+    font-size:13.5px;
+    line-height:1.6;
+    color:rgba(239,231,216,0.6);
+  }
+  .step .wood{
+    height:90px;
+    margin-top:20px;
+    border-radius:1px;
+  }
+  .step:nth-child(1) .wood{ background:linear-gradient(100deg,#4a3216,#2b1c0d); }
+  .step:nth-child(2) .wood{ background:linear-gradient(100deg,#6b4226,#3a2716); }
+  .step:nth-child(3) .wood{ background:linear-gradient(100deg,#8a5c34,#4a3216); }
+
+  /* --- repair story --- */
+  .repair{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    align-items:center;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:44px 0;
+  }
+  .repair .scene-flat{
+    height:280px;
+    border:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(90% 70% at 70% 20%, rgba(255,214,150,0.16), transparent 55%),
+      linear-gradient(150deg,#241a10,#100c07);
+  }
+  .repair .scene-flat::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+  .repair-copy .years{
+    font-family:'Fraunces', serif;
+    font-size:52px;
+    color:var(--gold);
+    line-height:1;
+    margin-bottom:10px;
+  }
+  .repair-copy p{
+    font-size:14.5px;
+    line-height:1.7;
+    color:rgba(239,231,216,0.65);
+    max-width:42ch;
+  }
+
+  @media (max-width:720px){
+    .process{ grid-template-columns:1fr; }
+    .repair{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <a href="index.html" class="back-nav">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+    Return to Studio
+  </a>
+
+  <div class="kicker">In the wild</div>
+  <h2>Rooms our furniture <em>lives</em> in, not just showrooms it stands in.</h2>
+  <p class="intro">Every piece we build eventually leaves the workshop. These are the rooms it ends up in — sent to us by the people who own them, unedited, years after delivery.</p>
+
+  <div class="grid">
+    <div class="card hero">
+      <div class="scene">
+        <svg class="silhouette" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="10" width="8" height="60" fill="#3a2417"/>
+          <rect x="45" y="10" width="8" height="60" fill="#3a2417"/>
+          <rect x="10" y="65" width="60" height="8" fill="#3a2417"/>
+          <rect x="10" y="70" width="8" height="55" fill="#3a2417"/>
+          <rect x="62" y="70" width="8" height="55" fill="#3a2417"/>
+        </svg>
+      </div>
+      <div class="caption">
+        <span class="place">Gothenburg apartment, 2023</span>
+        <span class="piece">Dining chair, walnut &amp; ash</span>
+      </div>
+    </div>
+
+    <div class="card tall">
+      <div class="scene">
+        <svg class="silhouette" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="15" y="20" width="70" height="6" fill="#3a2417"/>
+          <rect x="20" y="26" width="6" height="40" fill="#3a2417"/>
+          <rect x="74" y="26" width="6" height="40" fill="#3a2417"/>
+        </svg>
+      </div>
+      <div class="caption">
+        <span class="place">Malmö studio, 2021</span>
+        <span class="piece">Console table</span>
+      </div>
+    </div>
+
+    <div class="quote">
+      <p>"We bought the dining set six years ago. One leg loosened last winter — the studio walked us through the fix over a phone call. Twenty minutes, no glue kit needed."</p>
+      <span class="who">— Elin R., owner since 2018</span>
+    </div>
+  </div>
+
+  <div class="footer-row">
+    <span class="stat">Photos from <b>214</b> homes since 2016</span>
+    <a href="index.html">Share your room →</a>
+  </div>
+
+  <div class="section">
+    <div class="kicker">The making</div>
+    <h3>What you're paying for, before it becomes a chair.</h3>
+    <div class="process">
+      <div class="step">
+        <div class="mark">1</div>
+        <h4>Rough stock</h4>
+        <p>Kiln-dried walnut and ash, sorted by grain before a single cut is made.</p>
+        <div class="wood"></div>
+      </div>
+      <div class="step">
+        <div class="mark">2</div>
+        <h4>Joinery</h4>
+        <p>Mortise-and-tenon and dovetail joints, cut and fitted by hand — no screws, no brackets.</p>
+        <div class="wood"></div>
+      </div>
+      <div class="step">
+        <div class="mark">3</div>
+        <h4>Finishing</h4>
+        <p>Hand-rubbed oil finish, three coats, cured over a week before a piece ships.</p>
+        <div class="wood"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section repair">
+    <div class="scene-flat"></div>
+    <div class="repair-copy">
+      <div class="kicker">Built to be fixed</div>
+      <div class="years">50 yrs</div>
+      <p>Every joint is designed to be taken apart and reglued, not thrown out. If a piece comes back to us — for a wobble, a scratch, a re-oil — we repair it at cost, for as long as we're standing.</p>
+    </div>
+  </div>
+
+</body>
+</html>

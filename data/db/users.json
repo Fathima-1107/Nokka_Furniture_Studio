@@ -1,0 +1,42 @@
+[
+  {
+    "id": "USR-1000",
+    "name": "Rahul Sharma",
+    "email": "rahul.sharma@yahoo.com",
+    "password": "Rahul@2026",
+    "loyalty_tier": "Gold",
+    "created_at": "2024-01-01 10:00:00"
+  },
+  {
+    "id": "USR-1001",
+    "name": "Varun Gowda",
+    "email": "varun.gowda@gmail.com",
+    "password": "password123",
+    "loyalty_tier": "Gold",
+    "created_at": "2024-01-01 10:00:00"
+  },
+  {
+    "id": "USR-1002",
+    "name": "Priyanka Sen",
+    "email": "priyanka.sen@gmail.com",
+    "password": "password123",
+    "loyalty_tier": "Gold",
+    "created_at": "2024-01-01 10:00:00"
+  },
+  {
+    "id": "USR-1003",
+    "name": "Amit Verma",
+    "email": "amit.verma@hotmail.com",
+    "password": "password123",
+    "loyalty_tier": "Gold",
+    "created_at": "2024-01-01 10:00:00"
+  },
+  {
+    "id": "USR-1004",
+    "name": "Sneha Patel",
+    "email": "sneha.patel@gmail.com",
+    "password": "password123",
+    "loyalty_tier": "Gold",
+    "created_at": "2024-01-01 10:00:00"
+  }
+]

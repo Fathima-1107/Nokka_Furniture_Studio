@@ -1,0 +1,281 @@
+/* NOKKA Furniture — Vintage editorial newspaper styling */
+
+.newspaper-page {
+  background-color: #FAF8F5; /* Warm vintage paper */
+  background-image: radial-gradient(rgba(0,0,0,0.15) 0.5px, transparent 0.5px), 
+                    radial-gradient(rgba(0,0,0,0.1) 0.5px, #FAF8F5 0.5px);
+  background-size: 4px 4px; /* Subtle paper pulp noise */
+  background-position: 0 0, 2px 2px;
+  color: #1a1a1a;
+  min-height: 100vh;
+  padding: 60px 20px;
+  font-family: var(--display);
+}
+
+.newspaper-frame {
+  max-width: 900px;
+  margin: 0 auto;
+  border: 1px solid #1a1a1a;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Vintage Halftone Edge effect */
+.newspaper-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 8px double #1a1a1a;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Newspaper Header */
+.np-header {
+  border-bottom: 4px solid #1a1a1a;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.np-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--util);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.np-masthead {
+  font-size: clamp(38px, 6.5vw, 68px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 0.9;
+  margin: 10px 0;
+}
+
+/* Newspaper editorial columns grid */
+.np-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 800px) {
+  .np-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.np-main-col {
+  border-right: 1px solid #1a1a1a;
+  padding-right: 30px;
+}
+
+@media (max-width: 800px) {
+  .np-main-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 30px;
+  }
+}
+
+/* Bold Editorial Typography */
+.np-headline {
+  font-size: clamp(28px, 4.5vw, 44px);
+  line-height: 1.0;
+  font-weight: 500;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.np-lead {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 18px;
+  font-style: italic;
+  color: #333;
+}
+
+.np-body-cols {
+  column-count: 2;
+  column-gap: 20px;
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: justify;
+  color: #2b2b2b;
+}
+
+@media (max-width: 560px) {
+  .np-body-cols {
+    column-count: 1;
+  }
+}
+
+.np-body-cols p {
+  margin-bottom: 12px;
+}
+
+.np-body-cols p::first-letter {
+  font-family: var(--display);
+  font-size: 38px;
+  float: left;
+  line-height: 0.8;
+  margin-right: 6px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Schematics & Blueprint vectors */
+.np-schematic-wrap {
+  border: 1px solid #1a1a1a;
+  margin: 24px 0;
+  padding: 16px;
+  background: #FAF8F5;
+  position: relative;
+}
+
+.np-schematic-label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background: #FAF8F5;
+  padding: 0 6px;
+  font-family: var(--util);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.np-schematics {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+}
+
+.np-schematics svg {
+  width: 100px;
+  height: 100px;
+  stroke: #1a1a1a;
+  stroke-width: 1.2;
+}
+
+/* Sidebar Column */
+.np-side-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.np-badge-box {
+  border: 3px double #1a1a1a;
+  padding: 16px;
+  text-align: center;
+}
+
+.np-badge-box h3 {
+  font-family: var(--util);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.np-badge-box p {
+  font-size: 13px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* Coupon cutout box */
+.np-coupon {
+  border: 2px dashed #1a1a1a;
+  padding: 20px;
+  background: rgba(0,0,0,0.01);
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.np-coupon:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+.np-coupon-scissor {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: #FAF8F5;
+  padding: 0 4px;
+}
+
+.np-coupon-scissor svg {
+  width: 16px;
+  height: 16px;
+}
+
+.np-coupon h4 {
+  font-family: var(--util);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.np-coupon .offer {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.np-coupon p {
+  font-size: 11px;
+  font-family: var(--body);
+  line-height: 1.4;
+  color: #444;
+}
+
+.coupon-btn {
+  margin-top: 12px;
+  width: 100%;
+  border: 1px solid #1a1a1a;
+  padding: 8px;
+  font-family: var(--util);
+  font-size: 11px;
+  text-transform: uppercase;
+  background: #1a1a1a;
+  color: #FAF8F5;
+  transition: background 0.3s, color 0.3s;
+}
+
+.np-coupon:hover .coupon-btn {
+  background: #FAF8F5;
+  color: #1a1a1a;
+}
+
+.np-footer-note {
+  border-top: 1px solid #1a1a1a;
+  padding-top: 16px;
+  margin-top: 24px;
+  font-family: var(--util);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #555;
+  text-align: center;
+}

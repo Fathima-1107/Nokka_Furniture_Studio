@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Product Specifications</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 60px;
+      margin-top: 50px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+    .spec-canvas-wrap {
+      height: 500px;
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: radial-gradient(130% 110% at 50% 20%, #ece6da, #d5cebf 75%);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    NOKKA
+  </a>
+  <nav class="links">
+    <a href="products.html">Catalogue</a>
+    <a href="3d-showroom.html">3D Showroom</a>
+    <a href="3d-billboard.html">3D Billboard</a>
+    <a href="premium-showcase.html">Showcase</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="dashboard.html" style="border-left:1px solid var(--line); padding-left:12px; color:var(--rust); margin-left:4px;">My Orders</a>
+  </nav>
+  <div class="header-right">
+    <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L6.6 15.4A2 2 0 0 0 8.6 17H18A2 2 0 0 0 20 15.2L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.2" fill="currentColor"/><circle cx="18" cy="21" r="1.2" fill="currentColor"/></svg>
+      Cart <span class="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<main style="padding-top: 130px; padding-bottom: 100px;">
+  <div class="wrap">
+    <a href="products.html" style="font-family: var(--util); font-size: 12px; text-transform: uppercase; color: var(--brass); display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px;">
+      ← Back to catalogue
+    </a>
+    
+    <div class="product-grid">
+      <!-- 3D Canvas Box with AR elements -->
+      <div class="spec-canvas-wrap" style="position:relative; overflow:hidden; border-radius:12px; height:450px; background:#e6e0d3; border:1px solid var(--line);">
+        <video id="arVideo" autoplay playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; display:none;"></video>
+        <div id="roomFallback" style="position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80') center/cover; z-index:0; display:none;"></div>
+        <canvas id="specCanvas" style="width:100%; height:100%; position:relative; z-index:1; cursor: grab;"></canvas>
+      </div>
+
+      <!-- Specs Sidebar details -->
+      <div>
+        <span class="eyebrow" id="pEyebrow">NOKKA Joinery Gothenburg</span>
+        <h1 style="font-family:var(--display); font-size:42px; font-weight: 400; line-height: 1.1; margin: 10px 0 16px;" id="pTitle">Kessel Lounge Chair</h1>
+        <div style="font-family:var(--display); font-size:28px; color:var(--brass); margin-bottom: 20px;" id="pPrice">₹ 0</div>
+        
+        <p style="font-size:15px; color:var(--ink-soft); line-height:1.6; margin-bottom: 24px;" id="pDesc">
+          A low, wide-armed lounge chair built for reading — hand-caned back optional, oiled walnut frame as standard.
+        </p>
+
+        <!-- Timber Frame, Finish & Upholstery Customizer Dropdowns -->
+        <div id="dropdownsGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+          <div>
+            <label style="font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8a8171; display:block; margin-bottom:6px;">Frame Wood</label>
+            <select id="selectWood" style="width:100%; padding:8px 10px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:11px; outline:none; color:var(--ink);">
+              <option value="teak" selected>Teak Wood</option>
+              <option value="sheesham">Sheesham Wood</option>
+              <option value="oak">Oak Wood</option>
+              <option value="walnut">Walnut Wood</option>
+              <option value="rubber">Rubber Wood</option>
+              <option value="metal">Polished Metal</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8a8171; display:block; margin-bottom:6px;">Finish Coat</label>
+            <select id="selectFinish" style="width:100%; padding:8px 10px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:11px; outline:none; color:var(--ink);">
+              <option value="natural" selected>Natural Wood Oil</option>
+              <option value="walnut">Walnut Tint Oil</option>
+              <option value="dark_oak">Dark Oak Stain</option>
+              <option value="honey_oak">Honey Oak Stain</option>
+              <option value="matte_black">Matte Black Coat</option>
+              <option value="classic_brown">Classic Brown Oil</option>
+            </select>
+          </div>
+          <div id="upholsterySelectWrap">
+            <label style="font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8a8171; display:block; margin-bottom:6px;">Upholstery Style</label>
+            <select id="selectUpholstery" style="width:100%; padding:8px 10px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:11px; outline:none; color:var(--ink);">
+              <option value="leather" selected>Premium Leather</option>
+              <option value="velvet">Plush Velvet</option>
+              <option value="linen">Organic Linen</option>
+              <option value="chenille">Woven Chenille</option>
+              <option value="boucle">Textured Bouclé</option>
+              <option value="cotton">Soft Cotton</option>
+              <option value="suede">Deep Suede</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8a8171; display:block; margin-bottom:6px;">Size Scale</label>
+            <select id="selectSize" style="width:100%; padding:8px 10px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:11px; outline:none; color:var(--ink);">
+              <option value="standard" selected>Standard Size</option>
+              <option value="compact">Compact Size (-10%)</option>
+              <option value="grand">Grand Size (+15%, +₹5,000)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Choose Color Swatches -->
+        <div style="margin-bottom: 24px;" id="swatchSection">
+          <span style="font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8a8171; display:block; margin-bottom:8px;">Choose Cushion Color</span>
+          <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:6px;" id="fabricSwatches">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Trust badges list -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8a8171; letter-spacing:0.04em; margin-bottom:28px;">
+          <span>✓ 5-Year Warranty</span>
+          <span>✓ Premium Materials</span>
+          <span>✓ Free Installation*</span>
+          <span>✓ Secure Payment</span>
+        </div>
+
+        <!-- Spec Listing details -->
+        <div style="border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding: 10px 0; margin-bottom: 30px;">
+          <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:13px;">
+            <span style="font-family:var(--util); color:#8a8171; text-transform:uppercase;">Dimensions</span>
+            <span id="specDims">74 × 80 × 90 cm</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:13px;">
+            <span style="font-family:var(--util); color:#8a8171; text-transform:uppercase;">Wood Joinery</span>
+            <span id="specJoint">Double-mortise and tenon.</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:13px;">
+            <span style="font-family:var(--util); color:#8a8171; text-transform:uppercase;">Timber Finish</span>
+            <span id="specFinish">Hand-rubbed cold linseed oil.</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:13px;">
+            <span style="font-family:var(--util); color:#8a8171; text-transform:uppercase;">Upholstery</span>
+            <span id="specFabric">Swedish undyed boucle wool.</span>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:16px;">
+          <button class="btn btn-ghost" id="btnAddToCart" style="border-color: var(--line); color: var(--ink);">Add to Cart</button>
+          <button class="btn btn-solid" id="btnAR">View in Your Room</button>
+          <a href="" id="btnConfigure" class="btn btn-ghost" style="text-decoration:none;">Configure 3D</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Premium Product Details Tabs (Reviews, Delivery, Warranty) -->
+    <div style="margin-top: 60px; border-top: 1px solid var(--line); padding-top: 40px;">
+      <div style="display:flex; gap:30px; border-bottom:1px solid var(--line); margin-bottom:24px;">
+        <button id="tabReviews" style="background:none; border:none; border-bottom:2px solid var(--ink); padding:10px 0; font-family:var(--display); font-size:18px; cursor:pointer; color:var(--ink); font-weight:500; outline:none;">Customer Reviews</button>
+        <button id="tabDelivery" style="background:none; border:none; border-bottom:2px solid transparent; padding:10px 0; font-family:var(--display); font-size:18px; cursor:pointer; color:var(--ink-soft); outline:none;">Delivery & Installation</button>
+        <button id="tabWarranty" style="background:none; border:none; border-bottom:2px solid transparent; padding:10px 0; font-family:var(--display); font-size:18px; cursor:pointer; color:var(--ink-soft); outline:none;">5-Year Warranty Info</button>
+      </div>
+
+      <!-- Reviews Panel -->
+      <div id="panelReviews">
+        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:40px;">
+          <div>
+            <div style="font-size:48px; font-family:var(--display); color:var(--ink); line-height:1;">4.9</div>
+            <div style="color:var(--brass); margin:8px 0 12px; font-size:16px;">★★★★★</div>
+            <p style="font-size:12px; color:var(--ink-soft); line-height:1.5;">Based on verified joinery orders in Gothenburg and Bengaluru hubs.</p>
+          </div>
+          <div>
+            <div style="border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-weight:500; font-size:14px; color:var(--ink);">Fathima Jabeen</span>
+                <span style="font-family:var(--util); font-size:11px; color:#8a8171;">Verified Buyer</span>
+              </div>
+              <div style="color:var(--brass); font-size:12px; margin-bottom:6px;">★★★★★</div>
+              <p style="font-size:13.5px; color:var(--ink-soft); line-height:1.5;">The mortise joints are clean, and the custom leather color matches our living room layout beautifully. Absolute masterpiece!</p>
+            </div>
+            <div style="border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-weight:500; font-size:14px; color:var(--ink);">Varun Gowda</span>
+                <span style="font-family:var(--util); font-size:11px; color:#8a8171;">Verified Buyer</span>
+              </div>
+              <div style="color:var(--brass); font-size:12px; margin-bottom:6px;">★★★★★</div>
+              <p style="font-size:13.5px; color:var(--ink-soft); line-height:1.5;">Outstanding wood grain selection on the solid teak frame. The 3D color switcher was exact, looks even better in person.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Panel -->
+      <div id="panelDelivery" style="display:none; line-height:1.6; font-size:14px; color:var(--ink-soft);">
+        <p style="margin-bottom:12px;"><strong>Gothenburg Design & Bengaluru Logistics Hub Delivery Network</strong></p>
+        <p style="margin-bottom:12px;">All NOKKA Signature pieces are hand-finished to order. Once your frame oil coat cures, the item is secured in crate padding and routed through our local Bangalore fulfillment network (Whitefield, Indiranagar, HSR Layout, Koramangala, Jayanagar).</p>
+        <p>Our professional logistics team provides complimentary delivery, unboxing, and joint calibration at your residence to ensure alignment meets Swedish guild standards.</p>
+      </div>
+
+      <!-- Warranty Panel -->
+      <div id="panelWarranty" style="display:none; line-height:1.6; font-size:14px; color:var(--ink-soft);">
+        <p style="margin-bottom:12px;"><strong>NOKKA 5-Year Craftsmanship Guarantee</strong></p>
+        <p style="margin-bottom:12px;">We build furniture meant to be repaired, not replaced. Our 5-year guarantee covers structural integrity of solid wood frames, joint mortises, steel mechanisms, and leather coatings.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>NOKKA</a>
+        <p>A small joinery studio in Gothenburg, building furniture meant to be repaired, not replaced.</p>
+      </div>
+      <div class="footer-col"><h4>Collection</h4><a href="products.html">Chairs</a><a href="products.html">Seating</a><a href="products.html">Tables</a><a href="products.html">Shelving</a></div>
+      <div class="footer-col"><h4>Studio</h4><a href="3d-showroom.html">Showroom</a><a href="3d-billboard.html">Billboard</a><a href="premium-showcase.html">Specs Showcase</a><a href="newspaper-ad.html">Journal</a></div>
+      <div class="footer-col"><h4>Connect</h4><a href="meta-ad.html">Instagram</a><a href="offers.html">Special Offers</a><a href="admin.html">Admin Panel</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NOKKA Studio. All pieces numbered and signed.</span>
+      <span>Swedish heritage craftsmanship.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module">
+  import { PRODUCTS, makeMaterials, BUILDERS, initProducts } from './js/products.js';
+  import { ThreeViewer } from './js/three-helper.js';
+  import { initCartDrawer, addToCart } from './js/cart.js';
+
+  initCartDrawer();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('id') || 'ROYAL_VELVET_SOFA';
+
+  const canvas = document.getElementById('specCanvas');
+  const viewer = new ThreeViewer(canvas, {
+    fov: 30,
+    camZ: 7.6,
+    camY: 1.5,
+    autoRotate: true
+  });
+
+  let currentFabric = 'cream';
+  let currentWood = 'teak';
+  let currentFinish = 'natural';
+  let currentUpholstery = 'leather';
+  let activeProduct = null;
+
+  function rebuildModel() {
+    if (!activeProduct) return;
+    const mats = makeMaterials(THREE, { wood: currentWood, fabric: currentFabric, finish: currentFinish, upholstery: currentUpholstery });
+    const model = BUILDERS[activeProduct.builder](THREE, mats, activeProduct.id);
+    model.scale.setScalar(1.2);
+    viewer.setModel(model);
+  }
+
+  async function startProductPage() {
+    await initProducts();
+    const p = PRODUCTS.find(x => x.id === productId) || PRODUCTS[0];
+    activeProduct = p;
+    
+    document.getElementById('pTitle').textContent = p.name;
+    document.getElementById('pPrice').textContent = `₹ ${p.price.toLocaleString()}`;
+    document.getElementById('pDesc').textContent = p.desc;
+
+    document.getElementById('specDims').textContent = p.dims;
+    document.getElementById('specJoint').textContent = p.specs.joint;
+    document.getElementById('specFinish').textContent = p.specs.finish;
+    document.getElementById('specFabric').textContent = p.specs.fabric;
+    
+    // Customizer link binding
+    document.getElementById('btnConfigure').href = `3d-showroom.html?id=${p.id}`;
+
+    // Hide swatches if not a fabric builder
+    const swatchSect = document.getElementById('swatchSection');
+    const uphWrap = document.getElementById('upholsterySelectWrap');
+    const dropdownsGrid = document.getElementById('dropdownsGrid');
+    const fabricBuilders = ['chair', 'sofa', 'bed', 'lamp'];
+    const isFabric = fabricBuilders.includes(p.builder);
+
+    if (swatchSect) {
+      swatchSect.style.display = isFabric ? 'block' : 'none';
+    }
+    if (uphWrap) {
+      uphWrap.style.display = isFabric ? 'block' : 'none';
+    }
+    if (dropdownsGrid) {
+      dropdownsGrid.style.gridTemplateColumns = isFabric ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr';
+    }
+
+    const basePrice = p.price;
+    const priceEl = document.getElementById('pPrice');
+    
+    function updatePriceDisplay() {
+      const selectSz = document.getElementById('selectSize');
+      const isGrand = selectSz && selectSz.value === 'grand';
+      const currentPrice = basePrice + (isGrand ? 5000 : 0);
+      priceEl.textContent = `₹ ${currentPrice.toLocaleString()}`;
+    }
+
+    function updateSpecLabels() {
+      // Timber Finish updates
+      const selectF = document.getElementById('selectFinish');
+      if (selectF) {
+        document.getElementById('specFinish').textContent = selectF.options[selectF.selectedIndex].text;
+      }
+      
+      // Size updates
+      const selectSz = document.getElementById('selectSize');
+      if (selectSz) {
+        document.getElementById('specDims').textContent = `${selectSz.options[selectSz.selectedIndex].text} (${p.dims})`;
+      }
+      
+      // Upholstery updates
+      if (isFabric) {
+        const selectUph = document.getElementById('selectUpholstery');
+        if (selectUph) {
+          const uphText = selectUph.options[selectUph.selectedIndex].text;
+          const colorName = currentFabric.charAt(0).toUpperCase() + currentFabric.slice(1);
+          document.getElementById('specFabric').textContent = `${uphText} in ${colorName}`;
+        }
+      } else {
+        document.getElementById('specFabric').textContent = p.specs.fabric;
+      }
+    }
+
+    rebuildModel();
+    updateSpecLabels();
+    updatePriceDisplay();
+
+    // Listen for size change to update price
+    document.getElementById('selectSize').addEventListener('change', () => {
+      updatePriceDisplay();
+      updateSpecLabels();
+    });
+
+    // Cart operations
+    document.getElementById('btnAddToCart').addEventListener('click', () => {
+      const woodSelect = document.getElementById('selectWood');
+      const finishSelect = document.getElementById('selectFinish');
+      const uphSelect = document.getElementById('selectUpholstery');
+      const sizeSelect = document.getElementById('selectSize');
+
+      const wood = woodSelect.options[woodSelect.selectedIndex].text;
+      const finish = finishSelect.options[finishSelect.selectedIndex].text;
+      const size = sizeSelect.options[sizeSelect.selectedIndex].text;
+      const upholstery = isFabric ? uphSelect.options[uphSelect.selectedIndex].text : 'wood';
+      const color = isFabric ? currentFabric.charAt(0).toUpperCase() + currentFabric.slice(1) : 'No Cushion';
+
+      addToCart(p.id, {
+        wood,
+        finish,
+        upholstery,
+        color,
+        size
+      });
+    });
+
+    // Populate dynamic color swatches
+    const colorsMap = {
+      beige: '#e8dec9',
+      cream: '#f5f2eb',
+      ivory: '#fffefb',
+      grey: '#a8a7a5',
+      charcoal: '#3a3b3c',
+      brown: '#5c4033',
+      tan: '#b68a5d',
+      black: '#1a1a1a',
+      navy: '#101a35',
+      green: '#1a331e',
+      maroon: '#500d0e'
+    };
+
+    const swatchesContainer = document.getElementById('fabricSwatches');
+    if (swatchesContainer) {
+      Object.entries(colorsMap).forEach(([name, hex]) => {
+        const btn = document.createElement('button');
+        btn.className = 'swatch-btn';
+        btn.style.cssText = `width:22px; height:22px; border-radius:50%; background:${hex}; border:1.8px solid transparent; cursor:pointer; padding:0; box-shadow:0 2px 5px rgba(0,0,0,0.1);`;
+        btn.title = name;
+        btn.dataset.color = name;
+        
+        if (name === currentFabric) {
+          btn.style.borderColor = 'var(--ink)';
+        }
+        
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.swatch-btn').forEach(b => b.style.borderColor = 'transparent');
+          btn.style.borderColor = 'var(--ink)';
+          currentFabric = name;
+          rebuildModel();
+          updateSpecLabels();
+        });
+        swatchesContainer.appendChild(btn);
+      });
+    }
+
+    // Bind Dropdown Selects Change Events
+    document.getElementById('selectWood').addEventListener('change', (e) => {
+      currentWood = e.target.value;
+      rebuildModel();
+      updateSpecLabels();
+    });
+
+    document.getElementById('selectUpholstery').addEventListener('change', (e) => {
+      currentUpholstery = e.target.value;
+      rebuildModel();
+      updateSpecLabels();
+    });
+
+    document.getElementById('selectFinish').addEventListener('change', (e) => {
+      currentFinish = e.target.value;
+      rebuildModel();
+      updateSpecLabels();
+    });
+
+    // Tab switching handlers
+    const tRev = document.getElementById('tabReviews');
+    const tDel = document.getElementById('tabDelivery');
+    const tWar = document.getElementById('tabWarranty');
+
+    const pRev = document.getElementById('panelReviews');
+    const pDel = document.getElementById('panelDelivery');
+    const pWar = document.getElementById('panelWarranty');
+
+    if (tRev && tDel && tWar) {
+      tRev.addEventListener('click', () => {
+        tRev.style.borderBottomColor = 'var(--ink)';
+        tRev.style.color = 'var(--ink)';
+        tDel.style.borderBottomColor = 'transparent';
+        tDel.style.color = 'var(--ink-soft)';
+        tWar.style.borderBottomColor = 'transparent';
+        tWar.style.color = 'var(--ink-soft)';
+        
+        pRev.style.display = 'block';
+        pDel.style.display = 'none';
+        pWar.style.display = 'none';
+      });
+
+      tDel.addEventListener('click', () => {
+        tRev.style.borderBottomColor = 'transparent';
+        tRev.style.color = 'var(--ink-soft)';
+        tDel.style.borderBottomColor = 'var(--ink)';
+        tDel.style.color = 'var(--ink)';
+        tWar.style.borderBottomColor = 'transparent';
+        tWar.style.color = 'var(--ink-soft)';
+        
+        pRev.style.display = 'none';
+        pDel.style.display = 'block';
+        pWar.style.display = 'none';
+      });
+
+      tWar.addEventListener('click', () => {
+        tRev.style.borderBottomColor = 'transparent';
+        tRev.style.color = 'var(--ink-soft)';
+        tDel.style.borderBottomColor = 'transparent';
+        tDel.style.color = 'var(--ink-soft)';
+        tWar.style.borderBottomColor = 'var(--ink)';
+        tWar.style.color = 'var(--ink)';
+        
+        pRev.style.display = 'none';
+        pDel.style.display = 'none';
+        pWar.style.display = 'block';
+      });
+    }
+
+    // AR Room View Triggers
+    let arActive = false;
+    let arStream = null;
+    const btnAR = document.getElementById('btnAR');
+    
+    btnAR.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const video = document.getElementById('arVideo');
+      const fallback = document.getElementById('roomFallback');
+      
+      arActive = !arActive;
+      
+      if (arActive) {
+        btnAR.textContent = 'Exit Room View';
+        btnAR.style.background = 'var(--rust)';
+        btnAR.style.color = '#FAF8F5';
+        btnAR.style.borderColor = 'var(--rust)';
+        
+        try {
+          arStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+          video.srcObject = arStream;
+          video.style.display = 'block';
+          fallback.style.display = 'none';
+        } catch (err) {
+          console.warn('Webcam stream blocked or unavailable. Opening premium room background fallback.', err);
+          fallback.style.display = 'block';
+          video.style.display = 'none';
+        }
+      } else {
+        btnAR.textContent = 'View in Your Room';
+        btnAR.style.background = '';
+        btnAR.style.color = '';
+        btnAR.style.borderColor = '';
+        
+        if (arStream) {
+          arStream.getTracks().forEach(t => t.stop());
+          arStream = null;
+        }
+        video.style.display = 'none';
+        fallback.style.display = 'none';
+      }
+    });
+  }
+
+  startProductPage();
+</script>
+<script type="module" src="js/ai-assistant.js"></script>
+</body>
+</html>

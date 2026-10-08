@@ -1,0 +1,273 @@
+/* NOKKA Furniture — Cinematic luxury product showcase styles */
+
+.showcase-page {
+  background: var(--coal);
+  color: var(--paper);
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.showcase-header {
+  position: absolute;
+  top: 90px;
+  left: 40px;
+  max-width: 440px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .showcase-header {
+    left: 20px;
+    top: 80px;
+    max-width: 90%;
+  }
+}
+
+.showcase-header h1 {
+  font-family: var(--display);
+  font-size: clamp(32px, 4.5vw, 52px);
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+
+.showcase-header p {
+  font-size: 14px;
+  color: rgba(242, 238, 228, 0.6);
+  line-height: 1.6;
+}
+
+.canvas-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Floating interactive menu for cinematic focus points */
+.focus-menu {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .focus-menu {
+    right: auto;
+    left: 20px;
+    bottom: 30px;
+    top: auto;
+    transform: none;
+    flex-direction: row;
+    width: calc(100% - 40px);
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+}
+
+.focus-card {
+  background: rgba(27, 23, 18, 0.65);
+  border: 1px solid rgba(242, 238, 228, 0.1);
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: 280px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+}
+
+@media (max-width: 900px) {
+  .focus-card {
+    width: 220px;
+    flex-shrink: 0;
+  }
+}
+
+.focus-card:hover {
+  background: rgba(27, 23, 18, 0.8);
+  border-color: var(--brass);
+  transform: translateX(-4px);
+}
+
+@media (max-width: 900px) {
+  .focus-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.focus-card.active {
+  background: rgba(27, 23, 18, 0.9);
+  border-color: var(--brass);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.focus-card.active .title {
+  color: var(--brass-light);
+}
+
+.focus-card .num {
+  font-family: var(--display);
+  font-size: 11px;
+  color: var(--brass);
+  font-style: italic;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.focus-card .title {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  transition: color 0.3s;
+}
+
+.focus-card .desc {
+  font-size: 12px;
+  color: rgba(242, 238, 228, 0.5);
+  line-height: 1.4;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.focus-card.active .desc {
+  height: auto;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+/* Floating Audio synthesis / Ambient controller */
+.audio-controller {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(27, 23, 18, 0.65);
+  padding: 10px 18px;
+  border-radius: 100px;
+  border: 1px solid rgba(242, 238, 228, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 900px) {
+  .audio-controller {
+    bottom: auto;
+    top: 90px;
+    right: 20px;
+    left: auto;
+    padding: 8px 14px;
+  }
+}
+
+.audio-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brass-light);
+}
+
+.audio-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.audio-label {
+  font-family: var(--util);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(242, 238, 228, 0.6);
+}
+
+/* Live model selector bar on bottom center */
+.model-slider-nav {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 14px;
+  background: rgba(27, 23, 18, 0.65);
+  padding: 8px 10px;
+  border-radius: 100px;
+  border: 1px solid rgba(242, 238, 228, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 900px) {
+  .model-slider-nav {
+    display: none; /* Hide bottom nav in favor of list on small viewports */
+  }
+}
+
+.model-slider-btn {
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-family: var(--util);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(242, 238, 228, 0.5);
+  transition: all 0.3s;
+}
+
+.model-slider-btn:hover {
+  color: var(--paper);
+}
+
+.model-slider-btn.active {
+  background: var(--brass);
+  color: var(--ink);
+}
+
+/* Top Right Close Button to Return to Main */
+.showcase-close {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 100px;
+  background: rgba(27, 23, 18, 0.65);
+  border: 1px solid rgba(242, 238, 228, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 720px) {
+  .showcase-close {
+    right: 20px;
+    top: 20px;
+  }
+}
+
+.showcase-close:hover {
+  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
+}
+.showcase-close svg {
+  width: 20px;
+  height: 20px;
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — About Our Joinery Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-top: 50px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .story-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+    .story-card {
+      background: var(--paper-dim);
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+<script src="js/auth-guard.js"></script>
+
+<header>
+  <a href="index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    NOKKA
+  </a>
+  <nav class="links">
+    <a href="products.html">Catalogue</a>
+    <a href="3d-showroom.html">3D Showroom</a>
+    <a href="3d-billboard.html">3D Billboard</a>
+    <a href="premium-showcase.html">Showcase</a>
+    <a href="about.html" class="active">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="dashboard.html" style="border-left: 1px solid var(--line); padding-left: 12px; color:var(--rust); margin-left:4px;">My Orders</a>
+  </nav>
+  <div class="header-right">
+    <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L6.6 15.4A2 2 0 0 0 8.6 17H18A2 2 0 0 0 20 15.2L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.2" fill="currentColor"/><circle cx="18" cy="21" r="1.2" fill="currentColor"/></svg>
+      Cart <span class="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<main style="padding-top: 130px; padding-bottom: 100px;">
+  <div class="wrap">
+    <div style="margin-bottom: 50px; text-align: center; max-width:680px; margin:0 auto 50px;">
+      <span class="eyebrow">Our Philosophy</span>
+      <h1 style="font-family: var(--display); font-size: clamp(34px, 5vw, 56px); font-weight: 400; margin-top: 10px; margin-bottom: 20px;">Built to Outlive the Room</h1>
+      <p style="font-size: 16px; color: #5b5347; line-height: 1.6;">
+        NOKKA is a small joinery studio based on Gothenburg's industrial waterfront. Established in 2016, we reject modern flat-pack production in favor of heirloom-quality woodworking.
+      </p>
+    </div>
+
+    <div class="story-grid">
+      <div class="story-card">
+        <h2 style="font-family:var(--display); font-size:26px; font-weight:400; margin-bottom:16px;">True Solid Timber</h2>
+        <p style="font-size:14px; color:var(--ink-soft); line-height:1.6;">
+          We build exclusively from solid black walnut, ash, and European oak logs. You won't find wood veneers, particleboard, or plastic dowels in our shop. Solid timber handles wood movement naturally, expanding and contracting with seasonal humidity rather than splitting or warping.
+        </p>
+      </div>
+
+      <div class="story-card">
+        <h2 style="font-family:var(--display); font-size:26px; font-weight:400; margin-bottom:16px;">Craftsman Joinery</h2>
+        <p style="font-size:14px; color:var(--ink-soft); line-height:1.6;">
+          Our frames are joined using traditional blind tenons and wedged dovetail joints. These structural wood joints hold together under friction and timber pins, meaning there are no screws or metal fasteners hidden in the core frame to strip over time.
+        </p>
+      </div>
+    </div>
+
+    <div style="margin-top: 60px; text-align: center;">
+      <blockquote style="font-family:var(--display); font-style:italic; font-size: 28px; line-height:1.4; color:var(--brass); max-width:800px; margin: 0 auto 20px;">
+        "We measure our products not in warranty cycles, but in generations. A chair should grow old, take on a patina, and be passed down."
+      </blockquote>
+      <span class="eyebrow" style="font-size:11px;">— Nils Andersson, Studio Lead</span>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>NOKKA</a>
+        <p>A small joinery studio in Gothenburg, building furniture meant to be repaired, not replaced.</p>
+      </div>
+      <div class="footer-col"><h4>Collection</h4><a href="products.html">Chairs</a><a href="products.html">Seating</a><a href="products.html">Tables</a><a href="products.html">Shelving</a></div>
+      <div class="footer-col"><h4>Studio</h4><a href="3d-showroom.html">Showroom</a><a href="3d-billboard.html">Billboard</a><a href="premium-showcase.html">Specs Showcase</a><a href="newspaper-ad.html">Journal</a></div>
+      <div class="footer-col"><h4>Connect</h4><a href="meta-ad.html">Instagram</a><a href="offers.html">Special Offers</a><a href="admin.html">Admin Panel</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NOKKA Studio. All pieces numbered and signed.</span>
+      <span>Gothenburg Design & Bengaluru Logistics Hub. Built by Varun Gowda.</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initCartDrawer } from './js/cart.js';
+  initCartDrawer();
+</script>
+<script type="module" src="js/ai-assistant.js"></script>
+</body>
+</html>

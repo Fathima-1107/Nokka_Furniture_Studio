@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Admin Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0A08;
+      --card-bg: #141210;
+      --gold: #c99a52;
+      --text: #efe7d8;
+      --muted: rgba(239, 231, 216, 0.6);
+      --border: rgba(239, 231, 216, 0.14);
+      --rust: #f45b5b;
+      --green: #25D366;
+    }
+    body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Auth Guard */
+    body { display: none; }
+    
+    .sidebar {
+      width: 260px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-header {
+      padding: 32px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 20px;
+      margin: 0;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+    }
+    
+    .nav-links {
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      background: rgba(239, 231, 216, 0.04);
+      color: var(--text);
+    }
+    .nav-btn.active {
+      background: var(--border);
+      color: var(--text);
+      font-weight: 500;
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    
+    .panel-header {
+      margin-bottom: 32px;
+    }
+    .panel-header h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: 32px;
+      margin: 0;
+    }
+    
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .stat-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .stat-val {
+      font-family: 'Fraunces', serif;
+      font-size: 32px;
+      color: var(--gold);
+    }
+    
+    /* Tables */
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      background: rgba(239, 231, 216, 0.02);
+    }
+    tr:last-child td { border-bottom: none; }
+    
+    /* Form */
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: var(--muted);
+    }
+    .form-control, .form-select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .form-control:focus, .form-select:focus { border-color: var(--gold); }
+    
+    .btn-solid {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-danger {
+      background: transparent;
+      color: var(--rust);
+      border: 1px solid var(--rust);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .status-select {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+  </style>
+<style>
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
+.modal.open{display:flex}.modal-box{background:#201d19;border:1px solid #3a342c;border-radius:10px;padding:24px;width:100%;max-width:560px;max-height:88vh;overflow:auto}
+.toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}.toolbar input,.toolbar select{flex:1;min-width:150px}
+.bar{height:8px;background:var(--gold);border-radius:4px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}.small{font-size:12px;color:var(--muted)}
+#toast{position:fixed;bottom:20px;right:20px;background:#2d6a4f;color:#fff;padding:10px 18px;border-radius:6px;display:none;z-index:200}
+</style></head>
+<body>
+<div class="sidebar"><div class="sidebar-header"><h2>NOKKA ADMIN</h2></div><div class="nav-links">
+<button class="nav-btn active" data-p="dashboard">📊 Dashboard</button><button class="nav-btn" data-p="orders">📦 Orders</button>
+<button class="nav-btn" data-p="users">👥 Users</button><button class="nav-btn" data-p="products">🪑 Products</button>
+<button class="nav-btn" data-p="logs">🧾 Activity Log</button>
+<button class="nav-btn" onclick="logout()" style="margin-top:auto;color:var(--rust)">🚪 Logout</button></div></div>
+<div class="main-content">
+<div id="panel-dashboard" class="panel active"><div class="panel-header"><h1>Dashboard</h1></div>
+<div class="stats-row">
+<div class="stat-card"><div class="stat-title">Total Sales</div><div class="stat-val" id="sSales">-</div></div>
+<div class="stat-card"><div class="stat-title">Orders</div><div class="stat-val" id="sOrders">-</div></div>
+<div class="stat-card"><div class="stat-title">Pending</div><div class="stat-val" id="sPending">-</div></div>
+<div class="stat-card"><div class="stat-title">Users</div><div class="stat-val" id="sUsers">-</div></div>
+<div class="stat-card"><div class="stat-title">Products</div><div class="stat-val" id="sProducts">-</div></div></div>
+<div class="grid2"><div class="table-card" style="padding:18px"><h3>Revenue (last 14 days)</h3><div id="chart"></div></div>
+<div class="table-card" style="padding:18px"><h3>Payment methods</h3><div id="pay"></div></div>
+<div class="table-card" style="padding:18px"><h3>Top products</h3><div id="top"></div></div>
+<div class="table-card" style="padding:18px"><h3>Recent activity</h3><div id="recentLogs"></div></div></div>
+<div class="table-card" style="margin-top:18px"><table><thead><tr><th>Recent orders</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentOrders"></tbody></table></div></div>
+
+<div id="panel-orders" class="panel"><div class="panel-header"><h1>Order Management</h1></div>
+<div class="toolbar"><input class="form-control" id="oSearch" placeholder="Search order, invoice, customer, email…" oninput="renderOrders()">
+<select class="form-select" id="oFilter" onchange="renderOrders()"><option value="">All statuses</option><option value="ORDER_PLACED">Order Placed</option><option value="PAYMENT_CONFIRMED">Payment Confirmed</option><option value="PROCESSING">Processing</option><option value="PREPARING">Preparing</option><option value="QUALITY_CHECKED">Quality Checked</option><option value="SHIPPED">Shipped</option><option value="OUT_FOR_DELIVERY">Out for Delivery</option><option value="DELIVERED">Delivered</option><option value="CANCELLED">Cancelled</option></select></div>
+<div class="table-card"><table><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Payment</th><th>Status</th><th></th></tr></thead><tbody id="ordersBody"></tbody></table></div>
+<p class="small" id="oCount"></p></div>
+
+<div id="panel-users" class="panel"><div class="panel-header"><h1>User Management</h1></div>
+<div class="toolbar"><input class="form-control" id="uSearch" placeholder="Search name or email…" oninput="renderUsers()"></div>
+<div class="table-card"><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Orders</th><th>Spent</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usersBody"></tbody></table></div></div>
+
+<div id="panel-products" class="panel"><div class="panel-header"><h1>Products</h1></div>
+<div class="toolbar"><input class="form-control" id="pSearch" placeholder="Search products…" oninput="renderProducts()"><button class="btn-solid" onclick="openProduct()">+ ADD PRODUCT</button></div>
+<div class="table-card"><table><thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
+
+<div id="panel-logs" class="panel"><div class="panel-header"><h1>Activity Log</h1></div>
+<div class="table-card"><table><thead><tr><th>Time</th><th>Action</th></tr></thead><tbody id="logsBody"></tbody></table></div></div>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div><div id="toast"></div>
+<script>
+const TOKEN = localStorage.getItem('nokka_admin_token');
+if (!TOKEN) location.replace('admin-login.html'); else document.body.style.display = 'flex';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const inr = n => '₹' + Math.round(n || 0).toLocaleString('en-IN');
+const STATUS = {ORDER_PLACED:'Order Placed',PAYMENT_CONFIRMED:'Payment Confirmed',PROCESSING:'Processing',PREPARING:'Preparing',QUALITY_CHECKED:'Quality Checked',SHIPPED:'Shipped',OUT_FOR_DELIVERY:'Out for Delivery',DELIVERED:'Delivered',CANCELLED:'Cancelled',RETURN_REQUESTED:'Return Requested',RETURNED:'Returned',REFUNDED:'Refunded'};
+let orders = [], users = [], products = [];
+function logout() { localStorage.removeItem('nokka_admin_token'); location.href = 'admin-login.html'; }
+function toast(m, bad) { const t = $('toast'); t.textContent = m; t.style.background = bad ? '#a4402a' : '#2d6a4f'; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2500); }
+async function api(path, method = 'GET', body) {
+  const r = await fetch('/api/admin/' + path, { method, headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  if (r.status === 401) { logout(); throw new Error('Session expired'); }
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || 'Request failed');
+  return d;
+}
+document.querySelectorAll('.nav-btn[data-p]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.panel,.nav-btn').forEach(e => e.classList.remove('active'));
+  $('panel-' + b.dataset.p).classList.add('active'); b.classList.add('active');
+});
+const openModal = h => { $('modalBox').innerHTML = h; $('modal').classList.add('open'); };
+const closeModal = () => $('modal').classList.remove('open');
+$('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
+
+async function loadAll() {
+  try {
+    const [ov, o, u, p, l] = await Promise.all([api('overview'), api('orders'), api('users'), api('products'), api('audit-logs')]);
+    orders = o; users = u; products = p;
+    $('sSales').textContent = inr(ov.revenue); $('sOrders').textContent = ov.orders; $('sPending').textContent = ov.pending;
+    $('sUsers').textContent = ov.users; $('sProducts').textContent = ov.products;
+    const max = Math.max(1, ...ov.days.map(d => d.revenue));
+    $('chart').innerHTML = ov.days.map(d => `<div class="small" style="display:flex;gap:8px;align-items:center;margin:4px 0"><span style="width:52px">${d.date.slice(5)}</span><div class="bar" style="width:${d.revenue / max * 70}%"></div><span>${inr(d.revenue)}</span></div>`).join('') || '<p class="small">No sales yet.</p>';
+    $('pay').innerHTML = Object.entries(ov.byPay).map(([k, v]) => `<p>${esc(k)}: <b>${v.count}</b> orders · ${inr(v.total)}</p>`).join('');
+    $('top').innerHTML = ov.top.map(t => `<p>${esc(t.name)} <span class="small">× ${t.qty} · ${inr(t.revenue)}</span></p>`).join('') || '<p class="small">No data.</p>';
+    $('recentLogs').innerHTML = ov.logs.map(x => `<p class="small">${esc(x.created_at)} — ${esc(x.action)}</p>`).join('') || '<p class="small">No activity yet.</p>';
+    $('recentOrders').innerHTML = ov.recent.map(x => `<tr style="cursor:pointer" onclick="viewOrder('${esc(x.id)}')"><td>${esc(x.invoice_number)}</td><td>${esc(x.customer_name)}</td><td>${inr(x.grand_total)}</td><td>${STATUS[x.order_status] || x.order_status}</td></tr>`).join('');
+    $('logsBody').innerHTML = l.map(x => `<tr><td>${esc(x.created_at)}</td><td>${esc(x.action)}</td></tr>`).join('') || '<tr><td colspan="2">No activity yet.</td></tr>';
+    renderOrders(); renderUsers(); renderProducts();
+  } catch (e) { toast(e.message, true); }
+}
+function renderOrders() {
+  const q = $('oSearch').value.toLowerCase(), f = $('oFilter').value;
+  const list = orders.filter(o => (!f || o.order_status === f) && (!q || [o.id, o.invoice_number, o.customer_name, o.email].join(' ').toLowerCase().includes(q)));
+  $('oCount').textContent = `Showing ${Math.min(list.length, 100)} of ${list.length} orders`;
+  $('ordersBody').innerHTML = list.slice(0, 100).map(o => `<tr><td>${esc(o.invoice_number)}<div class="small">${esc(o.id)}</div></td><td>${esc(o.customer_name)}<div class="small">${esc(o.email)}</div></td><td>${inr(o.grand_total)}</td><td>${esc(o.payment_method)} · ${esc(o.payment_status)}</td>
+  <td><select class="status-select" onchange="setStatus('${esc(o.id)}',this.value)">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${o.order_status === k ? 'selected' : ''}>${v}</option>`).join('')}</select></td>
+  <td><button class="btn-danger" style="color:var(--gold);border-color:var(--gold)" onclick="viewOrder('${esc(o.id)}')">View</button></td></tr>`).join('') || '<tr><td colspan="6">No orders found.</td></tr>';
+}
+async function setStatus(id, status) { try { await api(`orders/${encodeURIComponent(id)}/status`, 'PUT', { status }); toast('Order status updated'); loadAll(); } catch (e) { toast(e.message, true); } }
+async function viewOrder(id) {
+  try {
+    const o = await api('orders/' + encodeURIComponent(id));
+    openModal(`<h2>${esc(o.invoice_number)}</h2><p class="small">${esc(o.id)} · ${esc(o.created_at)}</p>
+    <h4>Customer</h4><p>${esc(o.customer_name)}<br>${esc(o.email)} · ${esc(o.phone)}<br>${esc(o.delivery_address)}</p>
+    <h4>Items</h4>${(o.items || []).map(i => `<p>${esc(i.product_name)} × ${i.quantity} <span class="small">${inr(i.unit_price)} each</span></p>`).join('') || '<p class="small">No items recorded.</p>'}
+    <h4>Payment</h4><p>${esc(o.payment_method)} · ${esc(o.payment_status)}<br>Discount ${inr(o.discount)} · GST ${inr(o.gst_tax)} · Delivery ${inr(o.delivery_charge)}<br><b>Total ${inr(o.grand_total)}</b></p>
+    <h4>Tracking</h4>${(o.logs || []).map(l => `<p class="small">${esc(l.created_at)} — ${STATUS[l.status] || esc(l.status)}</p>`).join('') || '<p class="small">No tracking events.</p>'}
+    <div style="display:flex;gap:10px;margin-top:16px"><a class="btn-solid" style="text-decoration:none" target="_blank" href="invoice.html?id=${encodeURIComponent(o.id)}">INVOICE</a><button class="btn-danger" onclick="closeModal()">Close</button></div>`);
+  } catch (e) { toast(e.message, true); }
+}
+function renderUsers() {
+  const q = $('uSearch').value.toLowerCase();
+  $('usersBody').innerHTML = users.filter(u => !q || (u.name + u.email).toLowerCase().includes(q)).map(u => {
+    const b = u.status === 'blocked';
+    return `<tr><td>${esc(u.id)}</td><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${u.orders_count}</td><td>${inr(u.total_spent)}</td>
+    <td style="color:${b ? 'var(--rust)' : 'var(--green)'}">${b ? 'Blocked' : 'Active'}</td><td>
+    <button class="btn-danger" onclick="toggleUser('${u.id}',${!b})">${b ? 'Unblock' : 'Block'}</button>
+    <button class="btn-danger" style="color:var(--gold);border-color:var(--gold)" onclick="resetPw('${u.id}')">Reset PW</button>
+    <button class="btn-danger" onclick="delUser('${u.id}')">Delete</button></td></tr>`;
+  }).join('') || '<tr><td colspan="7">No users.</td></tr>';
+}
+async function toggleUser(id, block) { if (!confirm(`${block ? 'Block' : 'Unblock'} this user?`)) return; try { await api(`users/${id}/block`, 'PUT', { status: block ? 'blocked' : 'active' }); toast('User updated'); loadAll(); } catch (e) { toast(e.message, true); } }
+async function resetPw(id) { const pw = prompt('New password (min 6 characters):'); if (!pw) return; try { await api(`users/${id}/reset-password`, 'POST', { password: pw }); toast('Password reset'); } catch (e) { toast(e.message, true); } }
+async function delUser(id) { if (!confirm('Delete this user permanently?')) return; try { await api('users/' + id, 'DELETE'); toast('User deleted'); loadAll(); } catch (e) { toast(e.message, true); } }
+function renderProducts() {
+  const q = $('pSearch').value.toLowerCase();
+  $('productsBody').innerHTML = products.filter(p => !q || p.name.toLowerCase().includes(q)).map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.category || 'N/A')}</td><td>${inr(p.price)}</td><td style="color:${(p.stock ?? 25) < 5 ? 'var(--rust)' : 'inherit'}">${p.stock ?? 25}</td>
+  <td><button class="btn-danger" style="color:var(--gold);border-color:var(--gold)" onclick="openProduct('${esc(p.id)}')">Edit</button> <button class="btn-danger" onclick="delProduct('${esc(p.id)}')">Delete</button></td></tr>`).join('');
+}
+function openProduct(id) {
+  const p = products.find(x => x.id === id) || { name: '', category: 'living', price: '', stock: 25, material: '', desc: '' };
+  openModal(`<h2>${id ? 'Edit' : 'Add'} Product</h2><form onsubmit="saveProduct(event,'${id || ''}')">
+  ${[['name', 'Name', 'text'], ['category', 'Category', 'text'], ['price', 'Price (₹)', 'number'], ['stock', 'Stock', 'number'], ['material', 'Material', 'text']].map(([k, l, t]) => `<div class="form-group"><label>${l}</label><input class="form-control" id="f_${k}" type="${t}" value="${esc(p[k])}" required></div>`).join('')}
+  <div class="form-group"><label>Description</label><textarea class="form-control" id="f_desc" rows="3">${esc(p.desc)}</textarea></div>
+  <button class="btn-solid" type="submit">SAVE</button> <button type="button" class="btn-danger" onclick="closeModal()">Cancel</button></form>`);
+}
+async function saveProduct(e, id) {
+  e.preventDefault();
+  const b = {}; ['name', 'category', 'price', 'stock', 'material', 'desc'].forEach(k => b[k] = $('f_' + k).value);
+  try { await api(id ? 'products/' + id : 'products', id ? 'PUT' : 'POST', b); closeModal(); toast('Product saved'); loadAll(); } catch (er) { toast(er.message, true); }
+}
+async function delProduct(id) { if (!confirm('Delete this product permanently?')) return; try { await api('products/' + id, 'DELETE'); toast('Product deleted'); loadAll(); } catch (e) { toast(e.message, true); } }
+loadAll();
+</script></body></html>

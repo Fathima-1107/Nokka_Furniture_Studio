@@ -1,0 +1,246 @@
+/* NOKKA Furniture — Anamorphic 3D Billboard experience */
+
+.billboard-page {
+  background: var(--coal);
+  color: var(--paper);
+  min-height: 100vh;
+  padding-top: 100px;
+  padding-bottom: 80px;
+}
+
+.billboard-intro {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 50px;
+}
+
+.billboard-intro h1 {
+  font-family: var(--display);
+  font-size: clamp(34px, 5vw, 56px);
+  font-weight: 400;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.billboard-intro p {
+  color: rgba(242, 238, 228, 0.65);
+  font-size: 15px;
+}
+
+/* Anamorphic City Scenery Frame */
+.city-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #161512 0%, #0d0c0a 100%);
+  padding: 60px 40px;
+  border: 1px solid rgba(242, 238, 228, 0.08);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+
+@media (max-width: 720px) {
+  .city-stage {
+    padding: 30px 16px;
+  }
+}
+
+/* Simulated curved screen chassis */
+.billboard-chassis {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  background: #1F1B15;
+  border: 8px solid #2d261e;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 25px 60px rgba(0,0,0,0.8);
+  overflow: visible; /* Crucial for anamorphic float-out effect */
+}
+
+/* Overlay representing street view below the floating screen */
+.street-scene {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(242, 238, 228, 0.1);
+  padding-top: 24px;
+}
+
+@media (max-width: 720px) {
+  .street-scene {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+}
+
+.street-info h4 {
+  font-family: var(--util);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brass-light);
+}
+
+.street-info p {
+  font-size: 13px;
+  color: rgba(242, 238, 228, 0.5);
+  margin-top: 4px;
+}
+
+/* Perspective Tilt Controls */
+.billboard-controls {
+  display: flex;
+  gap: 24px;
+  background: rgba(242, 238, 228, 0.04);
+  padding: 20px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(242, 238, 228, 0.08);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-slider-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.control-slider-group label {
+  font-family: var(--util);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(242, 238, 228, 0.6);
+  min-width: 110px;
+}
+
+.control-slider-group input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  background: rgba(242, 238, 228, 0.15);
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+}
+
+.control-slider-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: var(--brass);
+  width: 14px;
+  height: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.control-slider-group input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Model selector track under billboard */
+.bb-track-title {
+  font-family: var(--util);
+  font-size: 12px;
+  color: var(--brass);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.bb-selector-rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-top: 36px;
+}
+
+.bb-selector-card {
+  flex: 0 0 160px;
+  background: rgba(242, 238, 228, 0.03);
+  border: 1px solid rgba(242, 238, 228, 0.08);
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+  transition: all 0.3s;
+}
+
+.bb-selector-card:hover {
+  background: rgba(242, 238, 228, 0.08);
+  border-color: rgba(242, 238, 228, 0.3);
+}
+
+.bb-selector-card.active {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: var(--ink);
+}
+
+.bb-selector-card .name {
+  font-family: var(--util);
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+}
+
+.bb-selector-card .price {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+  display: block;
+}
+
+/* HUD Overlay on billboard screen */
+.screen-hud {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  pointer-events: none;
+  font-family: var(--util);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: rgba(242, 238, 228, 0.4);
+  line-height: 1.6;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+.screen-hud strong {
+  color: var(--brass);
+}
+
+/* Explosion trigger action button overlay */
+.explode-trigger-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(242, 238, 228, 0.08);
+  border: 1px solid rgba(242, 238, 228, 0.2);
+  color: var(--paper);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-family: var(--util);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  z-index: 10;
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
+}
+
+.explode-trigger-btn:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.explode-trigger-btn.active {
+  background: var(--rust);
+  border-color: var(--rust);
+  color: var(--paper);
+}

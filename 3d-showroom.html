@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — 3D Furniture Showroom & Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/showroom.css">
+</head>
+<body>
+<script src="js/auth-guard.js"></script>
+
+<header>
+  <a href="index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    NOKKA
+  </a>
+  <nav class="links">
+    <a href="products.html">Catalogue</a>
+    <a href="3d-showroom.html" class="active">3D Showroom</a>
+    <a href="3d-billboard.html">3D Billboard</a>
+    <a href="premium-showcase.html">Showcase</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="dashboard.html" style="border-left: 1px solid var(--line); padding-left: 12px; color:var(--rust); margin-left:4px;">My Orders</a>
+  </nav>
+  <div class="header-right">
+    <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L6.6 15.4A2 2 0 0 0 8.6 17H18A2 2 0 0 0 20 15.2L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.2" fill="currentColor"/><circle cx="18" cy="21" r="1.2" fill="currentColor"/></svg>
+      Cart <span class="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<main class="showroom-layout">
+  <section class="viewer-pane">
+    <canvas id="showroomCanvas" class="viewer-canvas"></canvas>
+    
+    <div class="hotspot-overlay" id="hotspotOverlay">
+      <div class="hotspot" style="top: 45%; left: 48%;" id="hs1">
+        <button class="hotspot-btn" aria-label="Inspect Detail"></button>
+        <div class="hotspot-card">
+          <strong>Upholstery Stitching</strong>
+          Woven in a local Boras mill using undyed, high-character wool and linen loops.
+        </div>
+      </div>
+      <div class="hotspot" style="top: 75%; left: 52%;" id="hs2">
+        <button class="hotspot-btn" aria-label="Inspect Detail"></button>
+        <div class="hotspot-card">
+          <strong>Linseed Oil Polish</strong>
+          Polished with cold-pressed Swedish flax oil to draw out the natural walnut grains.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="control-pane">
+    <nav class="control-tabs">
+      <button class="tab-btn active" id="tabCustomizer">Customizer</button>
+      <button class="tab-btn" id="tabVisualizer">Room View</button>
+    </nav>
+
+    <div class="panel-content" id="panelCustomizer">
+      <div class="control-section">
+        <span class="section-label">Select Furniture Piece</span>
+        <div class="product-select-grid" id="productSelectGrid"></div>
+      </div>
+
+      <!-- Customizer Selections -->
+      <div class="control-section">
+        <span class="section-label">Timber Frame Wood</span>
+        <select id="selectWood" class="customizer-select" style="width:100%; padding:10px 12px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:12px; outline:none; color:var(--ink);">
+          <option value="teak" selected>Teak Wood</option>
+          <option value="sheesham">Sheesham Wood</option>
+          <option value="oak">Oak Wood</option>
+          <option value="walnut">Walnut Wood</option>
+          <option value="rubber">Rubber Wood</option>
+          <option value="metal">Polished Metal</option>
+        </select>
+      </div>
+
+      <div class="control-section" id="upholsterySection">
+        <span class="section-label">Upholstery Style</span>
+        <select id="selectUpholstery" class="customizer-select" style="width:100%; padding:10px 12px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:12px; outline:none; color:var(--ink); margin-bottom: 14px;">
+          <option value="leather" selected>Premium Leather</option>
+          <option value="velvet">Plush Velvet</option>
+          <option value="linen">Organic Linen</option>
+          <option value="chenille">Woven Chenille</option>
+          <option value="boucle">Textured Bouclé</option>
+          <option value="cotton">Soft Cotton</option>
+          <option value="suede">Deep Suede</option>
+        </select>
+        
+        <span class="section-label" style="margin-bottom:8px; display:block;">Upholstery Color</span>
+        <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:6px;" id="customizerColors">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="section-label">Varnish Finish Coat</span>
+        <select id="selectFinish" class="customizer-select" style="width:100%; padding:10px 12px; background:#FAF8F5; border:1px solid var(--line); border-radius:6px; font-family:'Space Grotesk', sans-serif; font-size:12px; outline:none; color:var(--ink);">
+          <option value="natural" selected>Natural Wood Oil</option>
+          <option value="walnut">Walnut Tint Oil</option>
+          <option value="dark_oak">Dark Oak Stain</option>
+          <option value="honey_oak">Honey Oak Stain</option>
+          <option value="matte_black">Matte Black Coat</option>
+          <option value="classic_brown">Classic Brown Oil</option>
+        </select>
+      </div>
+
+      <div class="control-section">
+        <div class="product-title" id="pTitle">Kessel Lounge Chair</div>
+        <div class="product-price" id="pPrice">$2,140</div>
+        <p class="product-desc" id="pDesc">A low, wide-armed lounge chair built for reading.</p>
+        
+        <div class="spec-list">
+          <div class="spec-item">
+            <span>Dimensions</span>
+            <span id="specDims">74 × 80 × 90 cm</span>
+          </div>
+          <div class="spec-item">
+            <span>Joint Construction</span>
+            <span id="specJoint">Double-mortise and tenon wood joints.</span>
+          </div>
+          <div class="spec-item">
+            <span>Material Blend</span>
+            <span id="specMaterial">American Black Walnut / Undyed Bouclé Wool</span>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn btn-ghost" id="btnAddToCart">Add to Cart</button>
+          <button class="btn btn-solid" id="btnBuyNow">Buy Now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-content" id="panelVisualizer" style="display: none;">
+      <div class="control-section">
+        <span class="section-label">Virtual Environment</span>
+        <div class="room-controls">
+          <button class="room-control-btn active" id="btnToggleRoom">
+            <span>Virtual Living Room Walls</span>
+            <span class="status">ON</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="section-label">Atmospheric Lighting</span>
+        <div class="room-controls">
+          <button class="room-control-btn active" data-light="afternoon">
+            <span>Nordic Afternoon</span>
+            <span style="font-size: 11px; opacity:0.65;">Natural daylight</span>
+          </button>
+          <button class="room-control-btn" data-light="sunrise">
+            <span>Gothenburg Sunrise</span>
+            <span style="font-size: 11px; opacity:0.65;">Warm golden glow</span>
+          </button>
+          <button class="room-control-btn" data-light="dusk">
+            <span>Stockholm Dusk</span>
+            <span style="font-size: 11px; opacity:0.65;">Cozy ambient rimlight</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="control-section" style="border-top:1px solid var(--line); padding-top: 24px;">
+        <h4 style="font-family:var(--display); font-size:16px; margin-bottom:10px;">Room Customizer Guide</h4>
+        <p style="font-size:13px; color:#5b5347; line-height:1.5;">
+          This experience renders our furniture inside a procedurally modeled clean gallery space. Toggle environmental walls, shadows, and custom light schemes to see how solid walnut finishes react to various times of the day.
+        </p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module">
+  import { PRODUCTS, makeMaterials, BUILDERS, initProducts } from './js/products.js';
+  import { ThreeViewer } from './js/three-helper.js';
+  import { initCartDrawer, addToCart, openCart } from './js/cart.js';
+
+  initCartDrawer();
+
+  let currentProductIndex = 0;
+  let customWood = 'teak';
+  let customFabric = 'cream';
+  let customFinish = 'natural';
+  let customUpholstery = 'leather';
+  let environmentRoom = true;
+  let activeLight = 'afternoon';
+
+  const canvas = document.getElementById('showroomCanvas');
+  const viewer = new ThreeViewer(canvas, {
+    fov: 34,
+    camZ: 6.8,
+    camY: 1.5,
+    autoRotate: true,
+    initRotY: 0.4
+  });
+
+  let roomGroup = new THREE.Group();
+  roomGroup.name = 'room_env';
+  
+  const floorGeo = new THREE.PlaneGeometry(16, 16);
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0xdfd8cb, roughness: 0.82 });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -1.56;
+  roomGroup.add(floor);
+
+  const wallGeo = new THREE.PlaneGeometry(16, 10);
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xe6e0d3, roughness: 0.95 });
+  const backWall = new THREE.Mesh(wallGeo, wallMat);
+  backWall.position.set(0, 3.4, -4);
+  roomGroup.add(backWall);
+
+  const leftWall = new THREE.Mesh(wallGeo, wallMat);
+  leftWall.rotation.y = Math.PI / 2;
+  leftWall.position.set(-6, 3.4, 0);
+  roomGroup.add(leftWall);
+
+  let sunriseLights = new THREE.Group();
+  let afternoonLights = new THREE.Group();
+  let duskLights = new THREE.Group();
+  
+  // Setup Sunrise lights
+  const sunKey = new THREE.DirectionalLight(0xffb87a, 1.4);
+  sunKey.position.set(8, 2, 4);
+  sunriseLights.add(sunKey);
+  const sunFill = new THREE.AmbientLight(0xfff3e3, 0.45);
+  sunriseLights.add(sunFill);
+
+  // Setup Afternoon lights
+  const dayKey = new THREE.DirectionalLight(0xffffff, 1.25);
+  dayKey.position.set(2, 6, 4);
+  afternoonLights.add(dayKey);
+  const dayFill = new THREE.AmbientLight(0xffffff, 0.55);
+  afternoonLights.add(dayFill);
+
+  // Setup Stockholm Dusk Cozy lights
+  const duskKey = new THREE.AmbientLight(0x3a4b6e, 0.28);
+  duskLights.add(duskKey);
+  const cozyLamp = new THREE.PointLight(0xffa244, 2.8, 12);
+  cozyLamp.position.set(-1.8, 0.8, -0.6);
+  duskLights.add(cozyLamp);
+  const cozyLampMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,0.2), new THREE.MeshBasicMaterial({color:0xffdca8}));
+  cozyLampMesh.position.set(-1.8, 0.8, -0.6);
+  duskLights.add(cozyLampMesh);
+
+  viewer.scene.add(sunriseLights);
+  viewer.scene.add(afternoonLights);
+  viewer.scene.add(duskLights);
+
+  function loadProduct(idx) {
+    currentProductIndex = idx;
+    const p = PRODUCTS[idx];
+
+    const uSect = document.getElementById('upholsterySection');
+    const fabricBuilders = ['chair', 'sofa', 'bed', 'lamp'];
+    if (uSect) {
+      uSect.style.display = fabricBuilders.includes(p.builder) ? 'block' : 'none';
+    }
+
+    const hs1 = document.getElementById('hs1');
+    const hs2 = document.getElementById('hs2');
+    if (p.builder === 'sofa') {
+      hs1.style.left = '35%'; hs1.style.top = '48%';
+      hs2.style.left = '65%'; hs2.style.top = '62%';
+    } else if (p.builder === 'table') {
+      hs1.style.left = '48%'; hs1.style.top = '34%';
+      hs2.style.left = '68%'; hs2.style.top = '72%';
+    } else {
+      hs1.style.left = '48%'; hs1.style.top = '45%';
+      hs2.style.left = '52%'; hs2.style.top = '75%';
+    }
+
+    updateModelConfig();
+
+    document.getElementById('pTitle').textContent = p.name;
+    document.getElementById('pPrice').textContent = `₹ ${p.price.toLocaleString()}`;
+    document.getElementById('pDesc').textContent = p.desc;
+    document.getElementById('specDims').textContent = p.dims;
+    document.getElementById('specJoint').textContent = p.specs.joint;
+  }
+
+  function updateModelConfig() {
+    const p = PRODUCTS[currentProductIndex];
+    const mats = makeMaterials(THREE, { wood: customWood, fabric: customFabric, finish: customFinish, upholstery: customUpholstery });
+    const model = BUILDERS[p.builder](THREE, mats, p.id);
+    model.scale.setScalar(1.25);
+    viewer.setModel(model);
+
+    // Update material spec label
+    const woodText = customWood.charAt(0).toUpperCase() + customWood.slice(1);
+    const fabricText = customFabric.charAt(0).toUpperCase() + customFabric.slice(1);
+    const finishText = customFinish.replace('_', ' ');
+    const selectUph = document.getElementById('selectUpholstery');
+    const upholsteryText = selectUph ? selectUph.options[selectUph.selectedIndex].text : 'Upholstery';
+    
+    const isFabric = ['chair', 'sofa', 'bed', 'lamp'].includes(p.builder);
+    document.getElementById('specMaterial').textContent = `${woodText} wood Frame / ${finishText}` + (isFabric ? ` / ${fabricText} ${upholsteryText}` : '');
+  }
+
+  // Populate dynamic color swatches
+  const colorsMap = {
+    beige: '#e8dec9',
+    cream: '#f5f2eb',
+    ivory: '#fffefb',
+    grey: '#a8a7a5',
+    charcoal: '#3a3b3c',
+    brown: '#5c4033',
+    tan: '#b68a5d',
+    black: '#1a1a1a',
+    navy: '#101a35',
+    green: '#1a331e',
+    maroon: '#500d0e'
+  };
+
+  const colorsContainer = document.getElementById('customizerColors');
+  if (colorsContainer) {
+    Object.entries(colorsMap).forEach(([name, hex]) => {
+      const btn = document.createElement('button');
+      btn.className = 'color-swatch-btn';
+      btn.style.cssText = `width:22px; height:22px; border-radius:50%; background:${hex}; border:1.8px solid transparent; cursor:pointer; padding:0; box-shadow:0 2px 5px rgba(0,0,0,0.1);`;
+      btn.title = name;
+      btn.dataset.color = name;
+      
+      if (name === customFabric) {
+        btn.style.borderColor = 'var(--ink)';
+      }
+      
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.color-swatch-btn').forEach(b => b.style.borderColor = 'transparent');
+        btn.style.borderColor = 'var(--ink)';
+        customFabric = name;
+        updateModelConfig();
+      });
+      colorsContainer.appendChild(btn);
+    });
+  }
+
+  // Bind Dropdown Selects Change Events
+  document.getElementById('selectWood').addEventListener('change', (e) => {
+    customWood = e.target.value;
+    updateModelConfig();
+  });
+
+  document.getElementById('selectUpholstery').addEventListener('change', (e) => {
+    customUpholstery = e.target.value;
+    updateModelConfig();
+  });
+
+  document.getElementById('selectFinish').addEventListener('change', (e) => {
+    customFinish = e.target.value;
+    updateModelConfig();
+  });
+
+  async function startShowroom() {
+    await initProducts();
+
+    const rail = document.getElementById('productSelectGrid');
+    rail.innerHTML = '';
+    PRODUCTS.forEach((p, i) => {
+      const btn = document.createElement('button');
+      btn.className = `product-option ${i === 0 ? 'active' : ''}`;
+      btn.dataset.idx = i;
+      btn.innerHTML = `
+        <svg viewBox="0 0 160 140" fill="none">${p.icon}</svg>
+        <span>${p.name.split(' ')[0]}</span>
+      `;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.product-option').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadProduct(i);
+      });
+      rail.appendChild(btn);
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const pId = urlParams.get('id');
+    let startIdx = 0;
+    if (pId) {
+      const idx = PRODUCTS.findIndex(x => x.id === pId);
+      if (idx !== -1) startIdx = idx;
+    }
+
+    const options = document.querySelectorAll('.product-option');
+    if (options[startIdx]) {
+      options.forEach(b => b.classList.remove('active'));
+      options[startIdx].classList.add('active');
+    }
+    loadProduct(startIdx);
+  }
+
+  startShowroom();
+
+  document.getElementById('tabCustomizer').addEventListener('click', () => {
+    document.getElementById('tabCustomizer').classList.add('active');
+    document.getElementById('tabVisualizer').classList.remove('active');
+    document.getElementById('panelCustomizer').style.display = 'block';
+    document.getElementById('panelVisualizer').style.display = 'none';
+  });
+
+  document.getElementById('tabVisualizer').addEventListener('click', () => {
+    document.getElementById('tabVisualizer').classList.add('active');
+    document.getElementById('tabCustomizer').classList.remove('active');
+    document.getElementById('panelVisualizer').style.display = 'block';
+    document.getElementById('panelCustomizer').style.display = 'none';
+  });
+
+  const toggleRoomBtn = document.getElementById('btnToggleRoom');
+  
+  function updateEnvironment() {
+    if (environmentRoom) {
+      viewer.scene.add(roomGroup);
+      viewer.shadowMesh.visible = false;
+    } else {
+      viewer.scene.remove(roomGroup);
+      viewer.shadowMesh.visible = true;
+    }
+    updateLights();
+  }
+
+  toggleRoomBtn.addEventListener('click', () => {
+    environmentRoom = !environmentRoom;
+    toggleRoomBtn.classList.toggle('active', environmentRoom);
+    toggleRoomBtn.querySelector('.status').textContent = environmentRoom ? 'ON' : 'OFF';
+    updateEnvironment();
+  });
+
+  function updateLights() {
+    sunriseLights.visible = environmentRoom && (activeLight === 'sunrise');
+    afternoonLights.visible = !environmentRoom || (activeLight === 'afternoon');
+    duskLights.visible = environmentRoom && (activeLight === 'dusk');
+  }
+
+  document.querySelectorAll('[data-light]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-light]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeLight = btn.dataset.light;
+      updateLights();
+    });
+  });
+
+  document.getElementById('btnAddToCart').addEventListener('click', () => {
+    addToCart(PRODUCTS[currentProductIndex].id);
+  });
+
+  document.getElementById('btnBuyNow').addEventListener('click', () => {
+    addToCart(PRODUCTS[currentProductIndex].id);
+    setTimeout(() => {
+      import('./js/cart.js').then(m => m.openCheckoutWizard());
+    }, 200);
+  });
+
+  updateEnvironment();
+</script>
+<script type="module" src="js/ai-assistant.js"></script>
+</body>
+</html>

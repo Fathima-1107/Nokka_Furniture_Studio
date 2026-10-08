@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Limited Campaign Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/metaad.css">
+</head>
+<body class="metaad-page">
+
+  <div class="metaad-viewport">
+    <header class="story-header">
+      <div class="story-progress">
+        <div class="story-bar"><div class="story-bar-fill" id="bar0"></div></div>
+        <div class="story-bar"><div class="story-bar-fill" id="bar1"></div></div>
+        <div class="story-bar"><div class="story-bar-fill" id="bar2"></div></div>
+      </div>
+      <div class="story-profile">
+        <div class="profile-info">
+          <div class="profile-avatar">N</div>
+          <div>
+            <div class="profile-name">nokka.studio</div>
+            <div class="profile-meta">Sponsored — Gothenburg</div>
+          </div>
+        </div>
+        <a href="index.html" class="story-close-btn" aria-label="Close Ad">×</a>
+      </div>
+    </header>
+
+    <div class="ad-hero-canvas-wrap">
+      <canvas id="adCanvas" class="ad-canvas"></canvas>
+      <div class="ad-interactive-hint">
+        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" style="stroke:currentColor; stroke-width:2;"><path d="M12 2A10 10 0 1 0 22 12" stroke-linecap="round"/><path d="M22 12L18 8M22 12L18 16" stroke-linecap="round"/></svg>
+        Swipe to rotate
+      </div>
+    </div>
+
+    <div class="urgency-bar">
+      <span>Queue Slots Available: <strong>3 Left</strong></span>
+      <span>•</span>
+      <span>Offer ends in: <span class="urgency-timer" id="timer">14:59</span></span>
+    </div>
+
+    <div class="ad-info">
+      <div class="ad-title-row">
+        <div>
+          <h2 class="ad-title" id="adTitle">Kessel Lounge Chair</h2>
+          <div class="ad-rating">
+            <span class="stars">★★★★★</span>
+            <span>4.9 (120+ signed pieces)</span>
+          </div>
+        </div>
+        <div class="ad-pricing">
+          <div class="ad-price-curr" id="adPrice">$1,926</div>
+          <div class="ad-price-orig" id="adOrigPrice">$2,140</div>
+        </div>
+      </div>
+
+      <p class="ad-desc" id="adDesc">
+        Selected solid logs, hand-rubbed oil finish. Furniture built to be repaired, not replaced. Grab one of the last queue slots in this month's batch.
+      </p>
+
+      <div class="promo-box">
+        <div class="promo-text">
+          <h5>Ad Campaign Voucher</h5>
+          <p>Extra 10% off checkout</p>
+        </div>
+        <div class="promo-code">NOKKA10</div>
+      </div>
+
+      <div class="ad-reviews-title">Recent reviews</div>
+      <div class="ad-review-card">
+        <div class="review-user-row">
+          <span>Lars W. — Gothenburg</span>
+          <span style="color:var(--brass);">★★★★★</span>
+        </div>
+        <p class="review-text">"Outstanding finish. Smells of fresh linseed oil. Outlived two move-ins already."</p>
+      </div>
+      <div class="ad-review-card">
+        <div class="review-user-row">
+          <span>Elena K. — Stockholm</span>
+          <span style="color:var(--brass);">★★★★★</span>
+        </div>
+        <p class="review-text">"The boucle fabric is amazing. Low seating profile is perfect for reading."</p>
+      </div>
+    </div>
+
+    <div class="ad-footer-buy">
+      <button class="btn btn-ghost" id="btnAdAdd" style="border-color: var(--line); color: var(--ink);">Add Cart</button>
+      <button class="btn btn-solid" id="btnAdBuy" style="background: var(--rust); color: var(--paper);">Secure Slot →</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script type="module">
+    import { PRODUCTS, makeMaterials, BUILDERS } from './js/products.js';
+    import { ThreeViewer } from './js/three-helper.js';
+    import { initCartDrawer, addToCart, openCart } from './js/cart.js';
+
+    initCartDrawer();
+
+    let currentStorySlide = 0;
+    const slidesData = [
+      { prodIdx: 0, title: 'Kessel Lounge Chair', desc: 'Crafted from solid black walnut. Curved posture profile built for reading.', price: 1926, orig: 2140 },
+      { prodIdx: 1, title: 'Baltic Sofa', desc: 'Exposed ash structural frame. Upholstered with undyed Swedish wool felt cushions.', price: 4374, orig: 4860 },
+      { prodIdx: 5, title: 'Torv Stool', desc: 'Scandinavian three-legged milking stool carved from a solid walnut billet.', price: 612, orig: 680 }
+    ];
+
+    const canvas = document.getElementById('adCanvas');
+    const viewer = new ThreeViewer(canvas, {
+      fov: 34,
+      camZ: 7.2,
+      camY: 1.6,
+      autoRotate: true,
+      allowZoom: false
+    });
+
+    viewer.scene.background = null;
+
+    function loadStorySlide(idx) {
+      currentStorySlide = idx;
+      const slide = slidesData[idx];
+      const p = PRODUCTS[slide.prodIdx];
+
+      const mats = makeMaterials(THREE, { wood: 'walnut', fabric: 'cream' });
+      const model = BUILDERS[p.builder](THREE, mats, p.id);
+      viewer.setModel(model);
+
+      document.getElementById('adTitle').textContent = slide.title;
+      document.getElementById('adPrice').textContent = `$${slide.price.toLocaleString()}`;
+      document.getElementById('adOrigPrice').textContent = `$${slide.orig.toLocaleString()}`;
+      document.getElementById('adDesc').textContent = slide.desc;
+
+      for (let s = 0; s < 3; s++) {
+        const fill = document.getElementById(`bar${s}`);
+        if (s < idx) {
+          fill.style.width = '100%';
+        } else if (s > idx) {
+          fill.style.width = '0%';
+        }
+      }
+    }
+
+    let slideTimer = 0;
+    const slideDuration = 4500;
+    const frameRate = 30;
+    const step = 100 / (slideDuration / (1000 / frameRate));
+
+    function tickStory() {
+      slideTimer += step;
+      if (slideTimer > 100) {
+        slideTimer = 0;
+        const nextSlide = (currentStorySlide + 1) % 3;
+        loadStorySlide(nextSlide);
+      }
+      
+      const currentFill = document.getElementById(`bar${currentStorySlide}`);
+      if (currentFill) {
+        currentFill.style.width = `${slideTimer}%`;
+      }
+      
+      setTimeout(tickStory, 1000 / frameRate);
+    }
+
+    loadStorySlide(0);
+    setTimeout(tickStory, 200);
+
+    let totalSec = 15 * 60;
+    const timerEl = document.getElementById('timer');
+    function tickTimer() {
+      totalSec--;
+      if (totalSec <= 0) totalSec = 15 * 60;
+      const mins = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const secs = String(totalSec % 60).padStart(2, '0');
+      timerEl.textContent = `${mins}:${secs}`;
+      setTimeout(tickTimer, 1000);
+    }
+    tickTimer();
+
+    document.getElementById('btnAdAdd').addEventListener('click', () => {
+      const activeSlide = slidesData[currentStorySlide];
+      const p = PRODUCTS[activeSlide.prodIdx];
+      addToCart(p.id);
+    });
+
+    document.getElementById('btnAdBuy').addEventListener('click', () => {
+      const activeSlide = slidesData[currentStorySlide];
+      const p = PRODUCTS[activeSlide.prodIdx];
+      addToCart(p.id);
+      openCart();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOKKA — Customer Orders & Warranty Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .lookup-card {
+      background: var(--paper-dim);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 500px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-family: var(--util);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #8e8371;
+      margin-bottom: 8px;
+    }
+    .form-control {
+      width: 100%;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .form-control:focus {
+      border-color: var(--brass);
+    }
+    .order-card {
+      background: var(--paper-dim);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .status-badge {
+      font-family: var(--util);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: var(--ink);
+      color: var(--paper);
+      display: inline-block;
+    }
+    .status-delivered { background: var(--sage); color: #FAF8F5; }
+    .status-cancelled { background: var(--rust); color: #FAF8F5; }
+    .status-shipping { background: #3b5998; color: white; }
+    
+    .items-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .warranty-box {
+      background: rgba(184, 147, 90, 0.08);
+      border: 1px solid rgba(184, 147, 90, 0.25);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 11.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+    }
+    
+    /* Dialog Overlay style */
+    .dialog-overlay {
+      position: fixed; inset: 0; background: rgba(27,23,18,0.7); backdrop-filter: blur(5px);
+      z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .dialog-card {
+      background: var(--paper); border: 1px solid #d5cebf; border-radius: 12px;
+      width: 100%; max-width: 440px; padding: 32px; box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+<script src="js/auth-guard.js"></script>
+
+<header>
+  <a href="index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    NOKKA
+  </a>
+  <nav class="links">
+    <a href="products.html">Catalogue</a>
+    <a href="3d-showroom.html">3D Showroom</a>
+    <a href="3d-billboard.html">3D Billboard</a>
+    <a href="premium-showcase.html">Showcase</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="dashboard.html" style="border-left: 1px solid var(--line); padding-left: 12px; color:var(--rust); margin-left:4px;">My Orders</a>
+  </nav>
+  <div class="header-right">
+    <button class="cart-btn" id="cartToggle" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L6.6 15.4A2 2 0 0 0 8.6 17H18A2 2 0 0 0 20 15.2L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1.2" fill="currentColor"/><circle cx="18" cy="21" r="1.2" fill="currentColor"/></svg>
+      Cart <span class="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<main style="padding-top: 130px; padding-bottom: 100px;">
+  <div class="wrap">
+    
+    <div style="border-bottom: 1px solid var(--line); padding-bottom: 20px; text-align: center; margin-bottom: 30px;">
+      <span class="eyebrow">Customer Hub</span>
+      <h1 style="font-family:var(--display); font-size:42px; font-weight:400; margin-top: 8px;">My Orders & Invoices</h1>
+    </div>
+
+    <!-- LOOKUP BOX -->
+    <div class="lookup-card">
+      <h3 style="font-family:var(--display); font-weight:400; font-size:22px; margin:0 0 10px;">Track Your Wood Queue</h3>
+      <p style="font-size:13px; color:#5b5347; margin-bottom:24px;">Your orders are automatically retrieved based on your registered email address.</p>
+      
+      <form id="lookupForm" onsubmit="handleLookup(event);">
+        <div class="form-group">
+          <label>Account Email</label>
+          <input type="text" id="lookupSearch" class="form-control" placeholder="varun.gowda@gmail.com" required>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <button type="submit" class="btn btn-solid" style="flex:1; justify-content:center; padding:12px;">Refresh Orders</button>
+          <button type="button" class="btn btn-outline" style="padding:12px;" onclick="openPwDialog()">Change Password</button>
+          <button type="button" class="btn btn-outline" style="padding:12px;" onclick="handleLogout()">Sign Out</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- RESULTS SECTION -->
+    <div id="resultsContainer" style="display:none; max-width:800px; margin: 40px auto 0;">
+      <h2 style="font-family:var(--display); font-weight:400; font-size:26px; margin-bottom:20px; border-bottom:1px solid var(--line); padding-bottom:10px;">Matching Orders</h2>
+      <div id="ordersList"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- RETURN / SERVICE CLAIM FORM DIALOG -->
+<div class="dialog-overlay" id="pwOverlay">
+  <div class="dialog-card">
+    <h3 style="font-family:var(--display);font-weight:400;margin:0 0 16px;">Change Password</h3>
+    <form onsubmit="submitPw(event)">
+      <input type="password" id="pwOld" class="form-input" placeholder="Current password" required style="width:100%;margin-bottom:10px;padding:10px;box-sizing:border-box;">
+      <input type="password" id="pwNew" class="form-input" placeholder="New password (min 6 characters)" minlength="6" required style="width:100%;margin-bottom:10px;padding:10px;box-sizing:border-box;">
+      <input type="password" id="pwNew2" class="form-input" placeholder="Confirm new password" minlength="6" required style="width:100%;margin-bottom:10px;padding:10px;box-sizing:border-box;">
+      <p id="pwMsg" style="font-size:13px;margin:0 0 12px;min-height:16px;"></p>
+      <div style="display:flex;gap:10px;"><button type="submit" class="btn btn-solid" style="flex:1;justify-content:center;">Update</button><button type="button" class="btn btn-outline" onclick="document.getElementById('pwOverlay').style.display='none'">Cancel</button></div>
+    </form>
+  </div>
+</div>
+<div class="dialog-overlay" id="returnOverlay">
+  <div class="dialog-card">
+    <h3 style="font-family:var(--display); font-weight:400; font-size:20px; margin:0 0 12px;">Return & Service Request</h3>
+    <form onsubmit="submitReturnRequest(event);">
+      <input type="hidden" id="returnOrderId">
+      <div class="form-group">
+        <label>Reason for return / repair service</label>
+        <textarea id="returnReason" class="form-control" rows="4" placeholder="Warped alignment dowel on side panel..." style="resize:none;" required></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn btn-outline" onclick="closeReturnDialog();">Cancel</button>
+        <button type="submit" class="btn btn-solid">Submit Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- WARRANTY CLAIM FORM DIALOG -->
+<div class="dialog-overlay" id="warrantyOverlay">
+  <div class="dialog-card">
+    <h3 style="font-family:var(--display); font-weight:400; font-size:20px; margin:0 0 12px;">File Nokka Warranty Claim</h3>
+    <form onsubmit="submitWarrantyClaim(event);">
+      <input type="hidden" id="warrantyOrderId">
+      <input type="hidden" id="warrantyProdId">
+      <div class="form-group">
+        <label>Specify structural defect details</label>
+        <textarea id="warrantyReason" class="form-control" rows="4" placeholder="Walnut grain fracture along bottom tenon leg..." style="resize:none;" required></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn btn-outline" onclick="closeWarrantyDialog();">Cancel</button>
+        <button type="submit" class="btn btn-solid">Submit Claim</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9M4 9L12 4L20 9M4 9H20M20 20V9M9 20V13H15V20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>NOKKA</a>
+        <p>A small joinery studio in Gothenburg, building furniture meant to be repaired, not replaced.</p>
+      </div>
+      <div class="footer-col"><h4>Collection</h4><a href="products.html">Chairs</a><a href="products.html">Seating</a><a href="products.html">Tables</a><a href="products.html">Shelving</a></div>
+      <div class="footer-col"><h4>Studio</h4><a href="3d-showroom.html">Showroom</a><a href="3d-billboard.html">Billboard</a><a href="premium-showcase.html">Specs Showcase</a><a href="newspaper-ad.html">Journal</a></div>
+      <div class="footer-col"><h4>Connect</h4><a href="meta-ad.html">Instagram</a><a href="offers.html">Special Offers</a><a href="admin.html">Admin Panel</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NOKKA Studio. All pieces numbered and signed.</span>
+      <span>Gothenburg Design & Bangalore Fulfillment. Built by Varun Gowda.</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initCartDrawer, showToast } from './js/cart.js';
+  initCartDrawer();
+
+  // Active countdown timers
+  window.countdownTimers = window.countdownTimers || [];
+
+  // Date/Time formatter to Indian Standard Time (IST)
+  function formatIST(utcString) {
+    if (!utcString) return { date: '-', time: '-' };
+    const date = new Date(utcString.endsWith('Z') ? utcString : utcString + 'Z');
+    const dStr = date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+    const tStr = date.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
+    return { date: dStr, time: tStr };
+  }
+
+  // Protect route
+  window.addEventListener('load', () => {
+    const userStr = localStorage.getItem('nokka_user') || localStorage.getItem('nokka_user_info');
+    const token = localStorage.getItem('nokka_user_token');
+    if (!userStr && !token) {
+      window.location.href = 'login.html';
+      return;
+    }
+    let user = null; try { user = userStr ? JSON.parse(userStr) : null; } catch (e) {}
+    if (!user || !user.email) { localStorage.clear(); window.location.href = 'login.html'; return; }
+    
+    // Auto-fetch orders for the logged-in user
+    document.getElementById('lookupSearch').value = user.email || '';
+    document.getElementById('lookupSearch').disabled = true;
+    if (user.email) queryOrders(user.email);
+    
+    // Update UI with user name
+    const titleEl = document.querySelector('h1');
+    if(titleEl) {
+      titleEl.innerHTML = `Welcome, ${user.name || 'Customer'}<br><span style="font-size:24px; color:#8e8371;">My Orders & Invoices</span>`;
+    }
+  });
+
+  window.openPwDialog = function() { document.getElementById('pwMsg').textContent=''; document.getElementById('pwOverlay').style.display='flex'; };
+  window.submitPw = async function(e) {
+    e.preventDefault();
+    const m = document.getElementById('pwMsg'), o = pwOld.value, n = pwNew.value;
+    if (n !== pwNew2.value) { m.style.color='#a4402a'; m.textContent='New passwords do not match.'; return; }
+    const r = await fetch('/api/auth/change-password', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ oldPassword:o, newPassword:n }) });
+    const d = await r.json().catch(()=>({}));
+    if (r.ok) { m.style.color='#2d6a4f'; m.textContent='Password updated.'; setTimeout(()=>{ document.getElementById('pwOverlay').style.display='none'; pwOld.value=pwNew.value=pwNew2.value=''; }, 1200); }
+    else { m.style.color='#a4402a'; m.textContent = d.error || 'Could not update password.'; }
+  };
+
+  window.handleLogout = function() {
+    localStorage.removeItem('nokka_user_token');
+    localStorage.removeItem('nokka_user');
+    localStorage.removeItem('nokka_user_info');
+    window.location.href = 'login.html';
+  };
+
+  window.handleLookup = function(e) {
+    e.preventDefault();
+    const search = document.getElementById('lookupSearch').value.trim();
+    queryOrders(search);
+  };
+
+  async function queryOrders(search) {
+    const resultsContainer = document.getElementById('resultsContainer');
+    const listEl = document.getElementById('ordersList');
+    listEl.innerHTML = '<div style="text-align:center; padding:30px; color:#8e8371;">Searching database archives...</div>';
+    resultsContainer.style.display = 'block';
+
+    // Clear old active timers
+    window.countdownTimers.forEach(t => clearInterval(t));
+    window.countdownTimers = [];
+
+    try {
+      const res = await fetch(`/api/orders/lookup?search=${encodeURIComponent(search)}`);
+      if (res.status === 401) { window.nokkaLogout(); return; }
+      if (!res.ok) throw new Error("Search failed");
+      const orders = await res.json();
+      
+      if (orders.length === 0) {
+        listEl.innerHTML = '<div style="text-align:center; padding:30px; color:var(--rust); font-weight:600;">No matching NOKKA order slots found.</div>';
+        return;
+      }
+
+      listEl.innerHTML = '';
+      for (const o of orders) {
+        // Fetch full detail for each order to get tracking timeline and warranties
+        const fullRes = await fetch(`/api/orders/${o.id}`);
+        if (!fullRes.ok) continue;
+        const oDetails = await fullRes.json();
+        
+        listEl.appendChild(createOrderCard(oDetails));
+      }
+    } catch (err) {
+      listEl.innerHTML = `<div style="text-align:center; padding:30px; color:var(--rust);">Error checking server: ${err.message}</div>`;
+    }
+  }
+
+  function startCountdown(expectedDeliveryStr, orderStatus, targetElementId, logs) {
+    const targetEl = document.getElementById(targetElementId);
+    if (!targetEl) return;
+
+    if (orderStatus === 'DELIVERED') {
+      const delLog = logs.find(l => l.status === 'DELIVERED');
+      const delIST = delLog ? formatIST(delLog.created_at) : formatIST(expectedDeliveryStr);
+      const delDateObj = new Date(delLog ? (delLog.created_at.endsWith('Z') ? delLog.created_at : delLog.created_at + 'Z') : expectedDeliveryStr);
+      const weekdayStr = delDateObj.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long' });
+      targetEl.innerHTML = `<span style="color: var(--sage); font-weight: 600;">Delivered on ${weekdayStr}, ${delIST.date} at ${delIST.time}</span>`;
+      return;
+    }
+
+    if (orderStatus === 'CANCELLED') {
+      targetEl.innerHTML = `<span style="color: var(--rust); font-weight: 600;">Cancelled & Refunded</span>`;
+      return;
+    }
+
+    function update() {
+      const now = new Date();
+      const deliveryDate = new Date(expectedDeliveryStr.endsWith('Z') ? expectedDeliveryStr : expectedDeliveryStr + 'Z');
+      const diff = deliveryDate - now;
+
+      if (diff <= 0) {
+        targetEl.innerHTML = `<span style="color: var(--brass); font-weight: 600;">Arriving Today</span>`;
+        return;
+      }
+
+      const seconds = Math.floor((diff / 1000) % 60);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      let text = '';
+      if (days > 0) {
+        text = `${days}d ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        text = `${hours}h ${minutes}m`;
+      } else {
+        text = `${minutes}m ${seconds}s`;
+      }
+
+      if (orderStatus === 'OUT_FOR_DELIVERY') {
+        targetEl.innerHTML = `<span style="color: var(--brass); font-weight: 600;">Arriving Today</span>`;
+      } else if (orderStatus === 'SHIPPED') {
+        targetEl.innerHTML = `Arriving in <span style="color: var(--brass); font-weight: 600;">${text}</span> (Live Dispatch)`;
+      } else {
+        targetEl.innerHTML = `Arriving in <span style="color: var(--brass); font-weight: 600;">${text}</span>`;
+      }
+    }
+
+    update();
+    const timer = setInterval(update, 1000);
+    window.countdownTimers.push(timer);
+  }
+
+  function createOrderCard(o) {
+    const card = document.createElement('div');
+    card.className = 'order-card';
+    
+    const istPlaced = formatIST(o.created_at);
+    
+    // Status Badge translation
+    let statusClass = '';
+    if (o.order_status === 'DELIVERED') statusClass = 'status-delivered';
+    else if (o.order_status === 'CANCELLED') statusClass = 'status-cancelled';
+    else if (o.order_status === 'SHIPPED' || o.order_status === 'OUT_FOR_DELIVERY') statusClass = 'status-shipping';
+    
+    const statusText = o.order_status.replace(/_/g, ' ');
+
+    // Build Checklist timeline html
+    let checklistHtml = '';
+    if (o.order_status !== 'CANCELLED') {
+      const statusIndices = {
+        'ORDER_PLACED': 0,
+        'PAYMENT_CONFIRMED': 1,
+        'PROCESSING': 2,
+        'PREPARING': 3,
+        'QUALITY_CHECKED': 4,
+        'SHIPPED': 5,
+        'OUT_FOR_DELIVERY': 6,
+        'DELIVERED': 7
+      };
+      
+      const currentIdx = statusIndices[o.order_status] || 0;
+      
+      const checklistSteps = [
+        { val: 0, label: 'Order Confirmed' },
+        { val: 1, label: 'Payment Confirmed' },
+        { val: 2, label: 'Furniture Processing' },
+        { val: 3, label: 'Being Prepared' },
+        { val: 4, label: 'Quality Check' },
+        { val: 5, label: 'Shipped' },
+        { val: 6, label: 'Out for Delivery' },
+        { val: 7, label: 'Delivered' }
+      ];
+
+      checklistHtml = `
+        <div style="background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:24px; margin-bottom:24px;">
+          <h4 style="font-family:var(--display); font-size:13px; font-weight:600; text-transform:uppercase; color:#8e8371; letter-spacing:0.04em; margin:0 0 20px;">Delivery Status Timeline</h4>
+          <div style="display:flex; flex-direction:column; gap:16px; position:relative; padding-left:24px;">
+            <!-- Timeline vertical progress line connector -->
+            <div style="position:absolute; left:7px; top:6px; bottom:6px; width:2px; background:#d5cebf; z-index:1;"></div>
+            
+            ${checklistSteps.map(step => {
+              const isCompleted = currentIdx > step.val || (currentIdx === 7 && step.val === 7);
+              const isCurrent = currentIdx === step.val;
+              
+              let dotColor = '#a8a090';
+              let textColor = '#8a8171';
+              let marker = '';
+              let fontWeight = '400';
+
+              if (isCompleted) {
+                dotColor = 'var(--sage)';
+                textColor = 'var(--sage)';
+                marker = '✓';
+                fontWeight = '600';
+              } else if (isCurrent) {
+                dotColor = 'var(--ink)';
+                textColor = 'var(--ink)';
+                marker = '➔';
+                fontWeight = '600';
+              }
+
+              return `
+                <div style="display:flex; align-items:center; gap:12px; z-index:2; position:relative; font-family:'Space Grotesk', sans-serif; font-size:13.5px; font-weight:${fontWeight}; color:${textColor};">
+                  <span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:#FAF8F5; border:2px solid ${dotColor}; color:${dotColor}; font-size:9px; font-weight:bold;">
+                    ${marker === '✓' ? '✓' : (marker === '➔' ? '•' : '')}
+                  </span>
+                  <span>${step.label}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      checklistHtml = `
+        <div style="background:rgba(139,74,52,0.08); border:1px solid rgba(139,74,52,0.2); border-radius:8px; padding:16px; margin-bottom:24px; color:var(--rust); font-size:13px; line-height:1.5;">
+          <strong>Order Cancelled & Refunded</strong><br>
+          This transaction was cancelled by request. All funds returned to customer payment channel.
+        </div>
+      `;
+    }
+
+    // Cancellation eligibility check (Only allowed before SHIPPED)
+    const allowedForCancel = ['ORDER_PLACED', 'PAYMENT_CONFIRMED', 'PROCESSING', 'PREPARING', 'QUALITY_CHECKED'];
+    const canCancel = allowedForCancel.includes(o.order_status);
+
+    // Return eligibility check
+    const canReturn = o.order_status === 'DELIVERED';
+
+    card.innerHTML = `
+      <div class="order-card-header">
+        <div>
+          <span style="font-family:var(--util); font-size:10px; text-transform:uppercase; color:#8e8371; display:block;">Invoice: ${o.invoice_number}</span>
+          <h3 style="font-family:var(--display); font-weight:400; font-size:20px; margin:4px 0 0;">Order ID: #${o.id}</h3>
+        </div>
+        <div style="text-align:right;">
+          <span class="status-badge ${statusClass}">${statusText}</span>
+          <div style="font-size:12px; color:#5b5347; margin-top:6px;">Placed: ${istPlaced.date}</div>
+        </div>
+      </div>
+      
+      <!-- ESTIMATED DELIVERY HEADLINE BLOCK -->
+      ${o.order_status !== 'CANCELLED' ? `
+      <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; gap: 20px; align-items: center; margin-bottom: 24px; flex-wrap: wrap;">
+        <div style="font-size: 28px; color: var(--brass);">🚚</div>
+        <div style="flex: 1; min-width: 200px;">
+          <span style="font-family: var(--util); font-size: 9px; text-transform: uppercase; color: #8e8371; display: block; margin-bottom: 4px; letter-spacing: 0.04em; font-weight:600;">Estimated Delivery</span>
+          <div style="font-family: var(--display); font-size: 22px; color: var(--ink); margin-bottom: 4px;" id="countdown-${o.id}">
+            Calculating remaining queue time...
+          </div>
+          <div style="font-size: 11.5px; color: #5b5347;">
+            <strong>Expected Delivery:</strong> <span id="deliveryDate-${o.id}">-</span>
+          </div>
+        </div>
+        <div style="border-left: 1px solid var(--line); padding-left: 20px; min-width: 160px;" class="no-print">
+          <span class="meta-label" style="font-family: var(--util); font-size: 9px; text-transform: uppercase; color: #8e8371; display: block; margin-bottom: 4px; letter-spacing: 0.04em; font-weight:600;">Fulfillment Hub</span>
+          <span style="font-size: 12.5px; font-weight: 600; display: block;">📍 ${o.delivery_address.includes(',') ? o.delivery_address.split(',').slice(-2).join(',').trim() : 'Bengaluru, Karnataka'}</span>
+          <span style="font-size: 10px; color:#8e8371; display:block; margin-top:4px;">Expected dispatch: <span id="dispatchDate-${o.id}">-</span></span>
+        </div>
+      </div>
+      ` : ''}
+
+      <!-- CHECKLIST TIMELINE -->
+      ${checklistHtml}
+      
+      <!-- ITEMS & WARRANTIES -->
+      <h4 style="font-family:var(--display); font-weight:500; font-size:16px; margin-bottom:12px;">Purchased Items</h4>
+      <div class="items-grid">
+        ${o.items.map(it => {
+          // Check warranty registration state
+          const w = o.warranties.find(x => x.product_id === it.product_id);
+          let wHtml = '';
+          
+          if (!w) {
+            wHtml = `
+              <div class="warranty-box">
+                <span>🛡️ Warranty unregistered (5 Years Coverage eligible)</span>
+                <button class="mini-btn" onclick="registerWarranty('${o.id}', '${it.product_id}', '${it.product_name}')" style="font-size:9.5px; padding:5px 10px;">Register Warranty</button>
+              </div>
+            `;
+          } else if (w.status === 'ACTIVE') {
+            const regDate = new Date(w.registered_at);
+            const expDate = new Date(regDate.setFullYear(regDate.getFullYear() + 5));
+            const expStr = expDate.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+            
+            wHtml = `
+              <div class="warranty-box">
+                <span style="color:var(--sage); font-weight:600;">✓ 5-Year Warranty Active (Expires: ${expStr})</span>
+                <button class="mini-btn" onclick="openClaimWarrantyDialog('${o.id}', '${it.product_id}')" style="font-size:9.5px; padding:5px 10px; background:var(--rust); color:white; border-color:var(--rust);">File Claim</button>
+              </div>
+            `;
+          } else if (w.status === 'CLAIM_PENDING') {
+            wHtml = `
+              <div class="warranty-box" style="background:rgba(27,23,18,0.05); border-color:var(--line);">
+                <span style="color:#8e8371; font-weight:600;">⌛ Warranty Claim Pending Review by Nokka Studio</span>
+              </div>
+            `;
+          } else if (w.status === 'CLAIM_APPROVED') {
+            wHtml = `
+              <div class="warranty-box" style="background:rgba(110,120,89,0.1); border-color:var(--sage);">
+                <span style="color:var(--sage); font-weight:600;">✓ Warranty Claim Approved (Fulfillment scheduled)</span>
+              </div>
+            `;
+          } else {
+            wHtml = `
+              <div class="warranty-box" style="background:rgba(139,74,52,0.1); border-color:var(--rust);">
+                <span style="color:var(--rust); font-weight:600;">✗ Warranty Claim Rejected by Nokka Studio</span>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="item-row">
+              <div>
+                <strong>${it.product_name}</strong> <span style="font-size:12px; color:#8e8371;">× ${it.quantity}</span>
+                <div style="font-size:11px; color:#8e8371; margin-top:4px;">
+                  Specs: ${it.material} / Cushion: ${it.color} / Size: ${it.size}
+                </div>
+                <div style="font-size:10px; font-family:monospace; margin-top:2px;">SKU: ${it.product_sku}</div>
+              </div>
+              <div style="font-weight:600;">₹ ${(it.unit_price * it.quantity).toLocaleString()}</div>
+              
+              <!-- Warranty details -->
+              ${wHtml}
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- DETAILED TRANS LOG TIMELINE TABLE -->
+      <div style="background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:20px; margin-bottom:24px;">
+        <h4 style="font-family:var(--display); font-size:13px; font-weight:600; text-transform:uppercase; color:#8e8371; letter-spacing:0.04em; margin:0 0 10px;">Fulfillment Logs Registry</h4>
+        <ul style="padding-left:16px; margin:0; line-height:1.6; font-size:12.5px;">
+          ${o.logs.map(l => {
+            const logIst = formatIST(l.created_at);
+            return `<li><strong>${l.status.replace(/_/g, ' ')}</strong> on ${logIst.date} at ${logIst.time}</li>`;
+          }).join('')}
+        </ul>
+      </div>
+
+      <div style="text-align:right; font-size:14px; font-weight:600; margin-bottom:20px;">
+        Grand Total: <span style="color:var(--brass); font-size:18px;">₹ ${o.grand_total.toLocaleString()}</span>
+      </div>
+      
+      <!-- ACTIONS -->
+      <div class="action-row">
+        <a href="invoice.html?id=${o.id}" target="_blank" class="btn btn-outline" style="font-size:10.5px;">View Printable Invoice</a>
+        ${canCancel ? `<button class="btn btn-ghost" onclick="cancelOrder('${o.id}')" style="border-color:var(--rust); color:var(--rust); font-size:10.5px;">Cancel Order</button>` : ''}
+        ${canReturn ? `<button class="btn btn-ghost" onclick="openReturnDialog('${o.id}')" style="font-size:10.5px;">Return / Request Service</button>` : ''}
+      </div>
+    `;
+
+    // Start live countdown timer asynchronously after card is added to DOM
+    setTimeout(() => {
+      startCountdown(o.expected_delivery_date, o.order_status, `countdown-${o.id}`, o.logs);
+      
+      // Populate expected/dispatch dates nicely
+      const deliveryDateObj = new Date(o.expected_delivery_date.endsWith('Z') ? o.expected_delivery_date : o.expected_delivery_date + 'Z');
+      const deliveryDateStr = deliveryDateObj.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+      const delDateEl = document.getElementById(`deliveryDate-${o.id}`);
+      if (delDateEl) delDateEl.textContent = deliveryDateStr;
+      
+      if (o.expected_dispatch_date) {
+        const dispatchDateObj = new Date(o.expected_dispatch_date.endsWith('Z') ? o.expected_dispatch_date : o.expected_dispatch_date + 'Z');
+        const dispatchDateStr = dispatchDateObj.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+        const dispDateEl = document.getElementById(`dispatchDate-${o.id}`);
+        if (dispDateEl) dispDateEl.textContent = `${dispatchDateStr} (${o.delivery_window || '10:00 AM – 6:00 PM'})`;
+      }
+    }, 50);
+    
+    return card;
+  }
+
+  // Action methods
+  window.cancelOrder = async function(id) {
+    if (!confirm("Are you sure you want to cancel your order queue slot? This action is irreversible.")) return;
+    try {
+      const res = await fetch(`/api/orders/${id}/cancel`, { method: 'POST' });
+      if (res.ok) {
+        showToast("Order Cancelled successfully.");
+        queryOrders(document.getElementById('lookupSearch').value.trim());
+      } else {
+        const err = await res.json();
+        alert("Cancellation Failed: " + err.error);
+      }
+    } catch(e) {
+      alert("Error contacting server.");
+    }
+  };
+
+  // Return dialog handlers
+  window.openReturnDialog = function(orderId) {
+    document.getElementById('returnOrderId').value = orderId;
+    document.getElementById('returnReason').value = '';
+    document.getElementById('returnOverlay').style.display = 'flex';
+  };
+  window.closeReturnDialog = function() {
+    document.getElementById('returnOverlay').style.display = 'none';
+  };
+  window.submitReturnRequest = async function(e) {
+    e.preventDefault();
+    const id = document.getElementById('returnOrderId').value;
+    const msg = document.getElementById('returnReason').value;
+
+    try {
+      const res = await fetch(`/api/orders/${id}/return`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      if (res.ok) {
+        closeReturnDialog();
+        showToast("Return request submitted successfully.");
+        queryOrders(document.getElementById('lookupSearch').value.trim());
+      } else {
+        const err = await res.json();
+        alert("Request Failed: " + err.error);
+      }
+    } catch(e) {
+      alert("Error contacting server.");
+    }
+  };
+
+  // Warranty Actions
+  window.registerWarranty = async function(orderId, prodId, prodName) {
+    try {
+      const res = await fetch(`/api/orders/${orderId}/warranty/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: prodId, product_name: prodName })
+      });
+      if (res.ok) {
+        showToast("5-Year Warranty Registered successfully.");
+        queryOrders(document.getElementById('lookupSearch').value.trim());
+      } else {
+        const err = await res.json();
+        alert("Registration Failed: " + err.error);
+      }
+    } catch(e) {
+      alert("Error contacting server.");
+    }
+  };
+
+  window.openClaimWarrantyDialog = function(orderId, prodId) {
+    document.getElementById('warrantyOrderId').value = orderId;
+    document.getElementById('warrantyProdId').value = prodId;
+    document.getElementById('warrantyReason').value = '';
+    document.getElementById('warrantyOverlay').style.display = 'flex';
+  };
+  window.closeWarrantyDialog = function() {
+    document.getElementById('warrantyOverlay').style.display = 'none';
+  };
+  window.submitWarrantyClaim = async function(e) {
+    e.preventDefault();
+    const id = document.getElementById('warrantyOrderId').value;
+    const prodId = document.getElementById('warrantyProdId').value;
+    const reason = document.getElementById('warrantyReason').value;
+
+    try {
+      const res = await fetch(`/api/orders/${id}/warranty/claim`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: prodId, reason: reason })
+      });
+      if (res.ok) {
+        closeWarrantyDialog();
+        showToast("Warranty claim submitted successfully.");
+        queryOrders(document.getElementById('lookupSearch').value.trim());
+      } else {
+        const err = await res.json();
+        alert("Claim Failed: " + err.error);
+      }
+    } catch(e) {
+      alert("Error contacting server.");
+    }
+  };
+</script>
+</body>
+</html>
